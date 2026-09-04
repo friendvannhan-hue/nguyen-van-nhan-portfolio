@@ -235,5 +235,5 @@ git commit -m "feat: add accessible portfolio interactions"
 ## Plan self-review
 
 - Spec coverage: Tasks 1–3 collectively cover bilingual content, every requested section, exact source metrics, selected UI/UX Pro Max palette/type/layout/motion requirements, links, semantic accessibility, mobile breakpoints, and browser verification.
-- No placeholders: `rg -n "TBD|TODO|implement later|fill in details|appropriate error handling|Write tests for the above|Similar to Task" docs/superpowers/plans/2026-09-04-nhan-nguyen-portfolio.md` returns no matches.
+- No placeholders: the plan has been reviewed for incomplete markers and generic implementation directives; none remain.
 - Interface consistency: Task 1 defines all stable section IDs; Task 2 consumes their markup classes; Task 3 consumes only explicit `data-section-link` and `.reveal` hooks, and produces non-essential `.is-active` / `.is-visible` classes.
