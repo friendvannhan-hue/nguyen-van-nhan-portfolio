@@ -2,7 +2,7 @@
 
 ## 1. Purpose and decision
 
-Build a Vietnamese-first, single-page portfolio that presents Nguyen Van Nhan as a Customer Success Leader and Customer Growth Lead with credible adjacent fit for Account Management and Sales Operations roles.
+Build a Vietnamese-first, single-page portfolio that presents Nguyen Van Nhan first as a Customer Growth Leader, followed by Customer Success Leader, Account Management, and Sales Operations positioning.
 
 The portfolio must make the viewer understand, in the first 30 seconds, that Nhan turns post-sale operations into measurable retention, expansion revenue, and scalable team execution. It will use the clarity, evidence hierarchy, and product-minded story flow of CNV Work, interpreted through a bright, spacious, Apple-inspired visual system. It must not reuse CNV Work brand assets or attempt to imitate its site.
 
@@ -15,7 +15,7 @@ Primary audience:
 
 Primary actions:
 
-1. Contact Nhan directly by email.
+1. Contact Nhan directly by email or phone.
 2. Open his LinkedIn profile.
 3. Explore the case-study area, initially populated with clearly labelled demo cases that Nhan will replace or enrich with verified materials.
 
@@ -64,9 +64,9 @@ The design must preserve surrounding conditions for every number. A metric canno
 
 - Eyebrow: `CUSTOMER GROWTH LEADER · HCMC, VIETNAM`.
 - H1: `Biến Customer Success thành động cơ tăng trưởng.`
-- Two-line supporting copy: leadership focus across SaaS, Martech, Retail, and FMCG; retention, expansion revenue, and scalable operations.
+- Two-line supporting copy: primary positioning as Customer Growth Leader, followed by Customer Success Leader, Account Management, and Sales Operations; industry focus across SaaS, Martech, Retail, and FMCG.
 - Proof strip: `400+ accounts`, `12B VNĐ portfolio`, `7-10 team`, `30% → 58% retention`.
-- CTAs: solid coral `Liên hệ trực tiếp`; outlined `Kết nối LinkedIn`; tertiary text link `Xem case study`.
+- CTAs: solid accessible coral `Gọi trực tiếp`; outlined `Gửi email`; outlined `Kết nối LinkedIn`; tertiary text link `Xem case study`.
 - Portrait area: use a neutral, softly framed business-casual placeholder during the demo stage. Its component must accept a later supplied photo without layout changes.
 - Background visual: a restrained `growth orbit` diagram linking customer lifecycle nodes. This replaces the dark CNV-style orb with a bright, original personal motif.
 
@@ -126,7 +126,7 @@ Clicking a card opens a detail panel with: context, challenge, Nhan's role, inte
 
 Heading: `Cung xay mot he thong tang truong ben vung.`
 
-Use a concise invitation to discuss customer retention, expansion, customer operations, or leadership opportunities. Provide direct email, LinkedIn, and a CV download link only after the final PDF path is approved. Repeat the three primary outcomes in a compact footer proof strip.
+Use a concise invitation to discuss customer retention, expansion, customer operations, or leadership opportunities. Provide direct phone `096 734 7781`, email `nhannv.working@gmail.com`, and LinkedIn `linkedin.com/in/nguyenvannhan`. Do not provide a CV download action. Repeat the three primary outcomes in a compact footer proof strip.
 
 ## 5. Visual direction: bright Personal Growth OS
 
@@ -142,13 +142,14 @@ Apple contributes calm hierarchy, white space, material restraint, and a premium
 | Raised surface | `--surface-card` | `#FFFFFF` | Cards and case-study panels |
 | Ink | `--text-primary` | `#0B1F3A` | Headings and core text |
 | Muted ink | `--text-secondary` | `#536176` | Body/supporting labels |
-| Primary signal | `--accent-coral` | `#F0647C` | CTA, key metrics, active state |
+| Decorative coral | `--accent-coral` | `#F0647C` | Gradient, halo, and non-text decoration |
+| Interactive coral | `--accent-coral-strong` | `#C93D5B` | Primary CTA background with white text |
 | Secondary signal | `--accent-cyan` | `#2BA6C8` | Process diagram and secondary data only |
 | Success signal | `--accent-growth` | `#1E9B6A` | Positive growth and verified outcomes |
 | Border | `--border-subtle` | `#DCE2EA` | Separation, never strong decoration |
 | Focus ring | `--focus-ring` | `#145DD7` | Visible keyboard focus |
 
-Coral, cyan, and green are never the only signal for a status; text labels and directional numbers carry the meaning too.
+Coral, cyan, and green are never the only signal for a status; text labels and directional numbers carry the meaning too. White text may use `--accent-coral-strong` because the pair measures 4.88:1. White text must not appear on `--accent-coral`, `--accent-cyan`, or `--accent-growth`; use primary ink or a separate contrast-compliant treatment instead.
 
 ### Type, grid, and surfaces
 
@@ -178,8 +179,9 @@ Coral, cyan, and green are never the only signal for a status; text labels and d
 
 ## 7. Data governance and demo content
 
-- The current CV is the factual source of truth. Copy will use the supplied direct email and LinkedIn URL, subject to final confirmation during implementation.
+- The current CV is the factual source of truth. Public contact endpoints are phone `096 734 7781`, email `nhannv.working@gmail.com`, and LinkedIn `linkedin.com/in/nguyenvannhan`.
 - Public company names and listed metrics are permitted by Nhan.
+- The current CV PDF must not be published or offered as a download.
 - Demo artefacts must be visibly marked as demo/placeholder and have an isolated data model so later screenshots, documents, or client-safe materials can replace them without altering section structure.
 - Do not include stock customer logos, synthetic testimonials, fabricated workflow screenshots, anonymous customer quotes, or inferred revenue claims.
 
@@ -187,7 +189,7 @@ Coral, cyan, and green are never the only signal for a status; text labels and d
 
 ### Scope
 
-- Static, GitHub-deployable website.
+- Static website that is compatible with GitHub Pages; repository and deployment configuration remain outside the initial local build until Nhan supplies the GitHub details.
 - Vietnamese-first content.
 - One scrolling home page plus deep-linkable case-study states; no authentication, CMS, analytics, contact form backend, or data collection.
 - Asset slots for future portrait and case-study evidence.
@@ -203,7 +205,6 @@ Coral, cyan, and green are never the only signal for a status; text labels and d
 
 - Final business-casual portrait.
 - Actual case-study assets and approved narrative details.
-- GitHub repository name and deployment URL.
-- Final CV download file.
+- GitHub username, repository name, and deployment URL.
 
 These are intentionally modular additions, not blockers for an impressive first demo.

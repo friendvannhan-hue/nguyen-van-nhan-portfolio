@@ -2,19 +2,23 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build a fast, accessible, Vietnamese-first static portfolio that positions Nguyen Van Nhan as a Customer Success and Customer Growth leader through verifiable operating outcomes and expandable demo case studies.
+**Goal:** Build a fast, accessible, Vietnamese-first static portfolio that positions Nguyen Van Nhan first as a Customer Growth Leader, followed by Customer Success Leader, Account Management, and Sales Operations, through verifiable outcomes and expandable demo case studies.
 
 **Architecture:** Use a dependency-free static site: semantic HTML for content and resilient no-JavaScript reading, CSS custom properties for the bright Personal Growth OS design system, and a small progressive-enhancement JavaScript module for active navigation, motion, and case-study disclosure. Keep copy and case-study configuration in a local JavaScript data module so supplied portrait assets and evidence can be inserted later without restructuring the page.
 
-**Tech Stack:** HTML5, CSS3 custom properties and media queries, vanilla JavaScript ES modules, Node built-in test runner, GitHub Pages. Use the bundled Node runtime at `/Users/cellphones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node` for automated checks; no npm dependencies, build tool, analytics, backend, or form service.
+**Tech Stack:** HTML5, CSS3 custom properties and media queries, vanilla JavaScript ES modules, and the Node built-in test runner. The output is compatible with GitHub Pages, but deployment configuration is deferred until the GitHub username and repository are supplied. Use the bundled Node runtime at `/Users/cellphones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node` for automated checks; no npm dependencies, build tool, analytics, backend, or form service.
 
 **Spec:** `docs/superpowers/specs/2026-09-07-personal-growth-os-design.md`
 
 ## Global Constraints
 
-- Build a Vietnamese-first single-page portfolio with deep-linkable case-study states, direct email and LinkedIn actions, and no data collection.
+- Build a Vietnamese-first single-page portfolio with deep-linkable case-study states, direct phone, email, and LinkedIn actions, and no data collection.
+- Use this positioning order: Customer Growth Leader, Customer Success Leader, Account Management, then Sales Operations.
+- Public contact endpoints are phone `096 734 7781` rendered as `tel:+84967347781`, email `nhannv.working@gmail.com`, and LinkedIn `https://www.linkedin.com/in/nguyenvannhan/`.
+- Do not publish, embed, link, or offer the current CV PDF as a download.
 - Use only claims and figures documented in the supplied CV or later explicitly approved by Nhan. Preserve each metric's time frame, account segment, and scope.
-- Use the bright Personal Growth OS tokens: `#F6F7F9`, `#FFFFFF`, `#0B1F3A`, `#536176`, `#F0647C`, `#2BA6C8`, `#1E9B6A`, `#DCE2EA`, and `#145DD7`.
+- Use the bright Personal Growth OS tokens: `#F6F7F9`, `#FFFFFF`, `#0B1F3A`, `#536176`, decorative coral `#F0647C`, interactive coral `#C93D5B`, `#2BA6C8`, `#1E9B6A`, `#DCE2EA`, and `#145DD7`.
+- White text may use `#C93D5B` because it measures 4.88:1. White text must not use `#F0647C`, `#2BA6C8`, or `#1E9B6A` as its background.
 - Use Inter for body/UI and Manrope for display text with robust system font fallbacks. Body text is at least 16 px; metadata is at least 13 px.
 - Never use CNV Work logos, screenshots, page code, or brand assets. The influence is narrative structure and outcome-led data presentation only.
 - Initial case-study cards must visibly say `Case study demo` and must not invent client details, testimonials, screenshots, customer logos, or unverified metrics.
@@ -31,9 +35,10 @@
 - `assets/js/case-studies.js` — typed-by-convention case-study data and rendering-safe copy for the three demo cards.
 - `assets/js/main.js` — progressive enhancements: mobile menu, active anchors, reduced-motion-safe reveal states, accessible case-study dialog, and URL hash handling.
 - `assets/images/portrait-placeholder.svg` — original abstract business-casual portrait placeholder with accessible decorative treatment; later replaced by a user-provided image at the same path or by updating one image source.
+- `server.mjs` — zero-dependency local static server with content-type mapping and path traversal protection.
 - `tests/portfolio.test.mjs` — Node built-in static tests for source-backed facts, semantic landmarks, accessible controls, configuration boundaries, and critical CSS rules.
-- `README.md` — local preview, test, and GitHub Pages deployment instructions, plus the replacement workflow for portrait and case-study evidence.
-- `.github/workflows/pages.yml` — GitHub Pages deployment workflow that publishes the repository root after the static test suite passes.
+- `tests/server.test.mjs` — Node integration tests for static serving, content types, unknown paths, and traversal protection.
+- `README.md` — local preview and test instructions, GitHub Pages compatibility notes, and the replacement workflow for portrait and case-study evidence.
 
 ## Shared Content and Component Contracts
 
@@ -74,7 +79,6 @@ The visible page must include exactly these proof points with their contexts: `4
 - Create: `assets/css/styles.css`
 - Create: `assets/js/main.js`
 - Create: `assets/js/case-studies.js`
-- Create: `server.mjs`
 - Create: `tests/portfolio.test.mjs`
 - Create: `README.md`
 
@@ -121,8 +125,6 @@ Expected: failure because `index.html` has not been created.
 
 Create `index.html` as valid HTML5 with `lang="vi"`, a responsive viewport meta tag, stylesheet reference, module-script reference, and temporary plain text that includes every guarded metric. Create the CSS and JavaScript files with only comments identifying their future responsibility. Create a `README.md` containing the exact test command from Step 2.
 
-Create `server.mjs` using Node `http`, `fs`, and `path` only. It must serve `/` as `/index.html`, return `404` for unknown paths, return `403` for a resolved file outside the repository root, and map `.html`, `.css`, `.js`, `.svg`, and `.png` to correct content types. Listen on `process.env.PORT || 4173`.
-
 - [ ] **Step 4: Re-run the source guardrail test.**
 
 Run the command from Step 2.
@@ -132,7 +134,7 @@ Expected: PASS with one passing test.
 - [ ] **Step 5: Commit the foundation.**
 
 ```bash
-git add index.html assets/css/styles.css assets/js/main.js assets/js/case-studies.js server.mjs tests/portfolio.test.mjs README.md
+git add index.html assets/css/styles.css assets/js/main.js assets/js/case-studies.js tests/portfolio.test.mjs README.md
 git commit -m "chore: scaffold personal growth portfolio"
 ```
 
@@ -157,9 +159,11 @@ test('page has landmarks, a keyboard skip link, and direct contact paths', () =>
   for (const id of ['impact', 'operating-system', 'experience', 'case-studies', 'contact']) {
     assert.match(page, new RegExp(`<(section|footer)[^>]*id="${id}"`));
   }
+  assert.match(page, /href="tel:\+84967347781"/);
   assert.match(page, /href="mailto:nhannv\.working@gmail\.com"/);
   assert.match(page, /href="https:\/\/www\.linkedin\.com\/in\/nguyenvannhan\/"/);
   assert.match(page, /<h1[^>]*>Biến Customer Success thành động cơ tăng trưởng\.<\/h1>/);
+  assert.doesNotMatch(page, /<a[^>]+download(?:=|\s|>)/i);
 });
 ```
 
@@ -190,7 +194,7 @@ Implement this exact semantic outline in `index.html`:
 <footer id="contact" aria-labelledby="contact-title">...</footer>
 ```
 
-Populate the hero, proof strip, lifecycle, career timeline, leadership/tool/recognition content, and contact close with CV-sourced Vietnamese copy. Add `data-section-link` to navigation anchors and `data-case-study-id` to three `<button type="button">` demo cards. Each demo card must visibly include `Case study demo` and a short statement that verified materials will be added later.
+Populate the hero, proof strip, lifecycle, career timeline, leadership/tool/recognition content, and contact close with CV-sourced Vietnamese copy. Present `Customer Growth Leader` first and the three adjacent targets in the approved order. Add direct call, email, and LinkedIn actions; do not add a CV download link. Add `data-section-link` to navigation anchors and `data-case-study-id` to three `<button type="button">` demo cards. Each demo card must visibly include `Case study demo` and a short statement that verified materials will be added later.
 
 - [ ] **Step 4: Verify semantic behavior and validate the HTML structure.**
 
@@ -224,7 +228,7 @@ Append this test:
 const css = await readFile(new URL('../assets/css/styles.css', import.meta.url), 'utf8');
 
 test('styles provide the approved visual tokens and critical accessibility rules', () => {
-  for (const color of ['#F6F7F9', '#FFFFFF', '#0B1F3A', '#536176', '#F0647C', '#2BA6C8', '#1E9B6A', '#DCE2EA', '#145DD7']) {
+  for (const color of ['#F6F7F9', '#FFFFFF', '#0B1F3A', '#536176', '#F0647C', '#C93D5B', '#2BA6C8', '#1E9B6A', '#DCE2EA', '#145DD7']) {
     assert.match(css, new RegExp(color));
   }
   assert.match(css, /:focus-visible/);
@@ -264,7 +268,7 @@ Define the approved tokens in `:root`, import Inter and Manrope with system fall
 }
 ```
 
-Style the bright off-white canvas, glass-light hero halo, original lifecycle orbit, proof cards, vertical timeline, demo case cards, dialog, and contact close. Use coral only for priority action/key proof, cyan for process relationships, and green for positively labelled outcomes. Keep all body copy at least 16 px, metadata at least 13 px, and interactive controls at least 44 px high.
+Style the bright off-white canvas, glass-light hero halo, original lifecycle orbit, proof cards, vertical timeline, demo case cards, dialog, and contact close. Use `#F0647C` only for decorative coral gradients and non-text emphasis. Use `#C93D5B` with white text for the primary CTA. Use cyan for process relationships and green for positively labelled outcomes, with `#0B1F3A` text when either color becomes a background. Keep all body copy at least 16 px, metadata at least 13 px, and interactive controls at least 44 px high.
 
 Create `assets/images/portrait-placeholder.svg` as an original abstract, non-identifying light-gradient silhouette. In `index.html`, render it as `<img ... alt="" aria-hidden="true">` until the user supplies a real portrait.
 
@@ -273,7 +277,7 @@ Create `assets/images/portrait-placeholder.svg` as an original abstract, non-ide
 Run the Node test command. Start a static server from the project root with:
 
 ```bash
-/Users/cellphones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node server.mjs
+/Users/cellphones/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -m http.server 4173
 ```
 
 Inspect 375, 768, 1024, and 1440 px widths for overflow, clipped timeline text, contrast, and CTAs that remain visible.
@@ -403,44 +407,111 @@ git add assets/js/main.js assets/css/styles.css index.html tests/portfolio.test.
 git commit -m "feat: enhance portfolio navigation and motion"
 ```
 
-## Task 6: Add local preview guidance and GitHub Pages publishing
+## Task 6: Verify the local preview server and document the publishing handoff
 
 **Files:**
-- Create: `.github/workflows/pages.yml`
+- Create: `server.mjs`
+- Create: `tests/server.test.mjs`
 - Modify: `README.md`
-- Modify: `tests/portfolio.test.mjs`
 
 **Interfaces:**
-- Consumes: root-level static site files and the Node test suite.
-- Produces: `node server.mjs` local preview command and GitHub Pages workflow that publishes only after tests succeed.
+- Consumes: root-level static site files completed in Tasks 1-5.
+- Produces: `server.mjs`, verified `node server.mjs` local preview behavior, and a precise GitHub Pages handoff that does not require a repository decision during the local build.
 
-- [ ] **Step 1: Add failing tests for project documentation and deployment configuration.**
+- [ ] **Step 1: Add failing integration tests for the preview server.**
 
-Append this test:
+Create `tests/server.test.mjs`:
 
 ```js
-const readme = await readFile(new URL('../README.md', import.meta.url), 'utf8');
-const workflow = await readFile(new URL('../.github/workflows/pages.yml', import.meta.url), 'utf8');
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { spawn } from 'node:child_process';
 
-test('repository documents preview and configures Pages after tests', () => {
-  assert.match(readme, /node server\.mjs/);
-  assert.match(readme, /GitHub Pages/);
-  assert.match(readme, /portrait-placeholder\.svg/);
-  assert.match(readme, /Case study demo/);
-  assert.match(workflow, /actions\/deploy-pages/);
-  assert.match(workflow, /node --test tests\/portfolio\.test\.mjs/);
+const port = 4273;
+const server = spawn(process.execPath, ['server.mjs'], {
+  cwd: new URL('..', import.meta.url),
+  env: { ...process.env, PORT: String(port) },
+});
+
+await new Promise((resolve, reject) => {
+  server.stdout.once('data', resolve);
+  server.once('error', reject);
+  server.once('exit', (code) => reject(new Error(`server exited before ready: ${code}`)));
+});
+
+test.after(() => server.kill());
+
+test('preview server serves the site and rejects unknown files', async () => {
+  const home = await fetch(`http://127.0.0.1:${port}/`);
+  assert.equal(home.status, 200);
+  assert.match(home.headers.get('content-type'), /text\/html/);
+  assert.match(await home.text(), /Customer Growth Leader/);
+
+  const missing = await fetch(`http://127.0.0.1:${port}/missing-file`);
+  assert.equal(missing.status, 404);
 });
 ```
 
 - [ ] **Step 2: Run tests to verify the expected failure.**
 
-Run the Node test command.
+Run:
 
-Expected: failure because the GitHub Pages workflow and the required README instructions do not exist.
+```bash
+/Users/cellphones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test tests/server.test.mjs
+```
 
-- [ ] **Step 3: Implement the local server, documentation, and Pages workflow.**
+Expected: failure because `server.mjs` does not exist.
 
-Write `.github/workflows/pages.yml` using `actions/checkout@v4`, `actions/setup-node@v4`, `actions/upload-pages-artifact@v3`, and `actions/deploy-pages@v4`. Run `node --test tests/portfolio.test.mjs` before artifact upload. Configure permissions `contents: read`, `pages: write`, and `id-token: write`; deploy on `push` to `main` and `workflow_dispatch`.
+- [ ] **Step 3: Complete the preview-server contract and publishing handoff documentation.**
+
+Create `server.mjs` using Node `http`, `fs`, and `path` only. It must serve `/` as `/index.html`, return `404` for unknown paths, return `403` for a resolved file outside the repository root, map `.html`, `.css`, `.js`, `.svg`, and `.png` to correct content types, listen on `process.env.PORT || 4173`, and write one readiness line to stdout after binding the port.
+
+Use this implementation shape:
+
+```js
+import { readFile } from 'node:fs/promises';
+import { createServer } from 'node:http';
+import { extname, resolve, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const root = resolve(fileURLToPath(new URL('.', import.meta.url)));
+const port = Number(process.env.PORT || 4173);
+const contentTypes = {
+  '.css': 'text/css; charset=utf-8',
+  '.html': 'text/html; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.png': 'image/png',
+  '.svg': 'image/svg+xml; charset=utf-8',
+};
+
+const server = createServer(async (request, response) => {
+  try {
+    const url = new URL(request.url, 'http://localhost');
+    const pathname = decodeURIComponent(url.pathname);
+    const relativePath = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '');
+    const filePath = resolve(root, relativePath);
+
+    if (filePath !== root && !filePath.startsWith(`${root}${sep}`)) {
+      response.writeHead(403).end('Forbidden');
+      return;
+    }
+
+    const body = await readFile(filePath);
+    response.writeHead(200, {
+      'Content-Type': contentTypes[extname(filePath)] || 'application/octet-stream',
+      'X-Content-Type-Options': 'nosniff',
+    });
+    response.end(body);
+  } catch (error) {
+    const status = error.code === 'ENOENT' ? 404 : error instanceof URIError ? 400 : 500;
+    response.writeHead(status).end(status === 404 ? 'Not found' : 'Request failed');
+  }
+});
+
+server.listen(port, '127.0.0.1', () => {
+  console.log(`Portfolio preview: http://127.0.0.1:${port}`);
+});
+```
 
 Update `README.md` with:
 
@@ -449,25 +520,31 @@ Update `README.md` with:
 /Users/cellphones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node server.mjs
 ```
 
-Document how to replace `assets/images/portrait-placeholder.svg`, update the `caseStudies` records only with approved evidence, enable GitHub Pages with the `GitHub Actions` source, and update the LinkedIn/email copy if Nhan changes either public contact endpoint.
+Document how to replace `assets/images/portrait-placeholder.svg`, update the `caseStudies` records only with approved evidence, and update the phone/email/LinkedIn values. Add a `GitHub deployment deferred` section stating that the site is GitHub Pages compatible but no repository, workflow, remote, push, or deployment is configured until Nhan supplies the GitHub username and repository name. State explicitly that the CV PDF is not a public asset and must not be copied into the site.
 
 - [ ] **Step 4: Verify local server, deployment syntax, and the full test suite.**
 
-Run the test command. Start `server.mjs`, open `http://localhost:4173`, and verify the home page, CSS, JavaScript module, and SVG all return status 200. Request `/../../etc/passwd` and verify status 403 or 404. Inspect the workflow YAML for valid indentation and required deploy action ordering.
+Run:
 
-Expected: tests PASS; local preview works; path traversal is not served.
+```bash
+/Users/cellphones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test tests/portfolio.test.mjs tests/server.test.mjs
+```
+
+Then start `server.mjs`, open `http://localhost:4173`, and verify the home page, CSS, JavaScript module, and SVG all return status 200. Request an encoded traversal path and verify status 403 or 404.
+
+Expected: both test files PASS; local preview works; path traversal is not served; no remote repository is created or modified.
 
 - [ ] **Step 5: Commit preview and deployment configuration.**
 
 ```bash
-git add .github/workflows/pages.yml README.md tests/portfolio.test.mjs
-git commit -m "ci: publish portfolio to GitHub Pages"
+git add server.mjs tests/server.test.mjs README.md
+git commit -m "test: verify local portfolio preview"
 ```
 
 ## Task 7: Run release verification and prepare the user review
 
 **Files:**
-- Modify only if an issue is found: `index.html`, `assets/css/styles.css`, `assets/js/case-studies.js`, `assets/js/main.js`, `assets/images/portrait-placeholder.svg`, `README.md`, `server.mjs`, `.github/workflows/pages.yml`, or `tests/portfolio.test.mjs`
+- Modify only if an issue is found: `index.html`, `assets/css/styles.css`, `assets/js/case-studies.js`, `assets/js/main.js`, `assets/images/portrait-placeholder.svg`, `README.md`, `server.mjs`, `tests/portfolio.test.mjs`, or `tests/server.test.mjs`
 
 **Interfaces:**
 - Consumes: the completed static site and all preceding checks.
@@ -478,7 +555,7 @@ git commit -m "ci: publish portfolio to GitHub Pages"
 Run:
 
 ```bash
-/Users/cellphones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test tests/portfolio.test.mjs
+/Users/cellphones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test tests/portfolio.test.mjs tests/server.test.mjs
 git diff --check
 git status --short
 ```
@@ -489,7 +566,7 @@ Expected: all tests pass; no whitespace errors; no horizontal overflow; contact 
 
 - [ ] **Step 2: Check the copy against the CV source.**
 
-Compare every company, title, date, award, portfolio size, metric, and contact endpoint against `/Users/cellphones/Downloads/Cv CSL Bảng chuẩn.pdf`. Remove or correct any claim without an explicit source. Confirm every temporary case-study statement stays visibly labelled `Case study demo`.
+Compare every company, title, date, award, portfolio size, metric, and contact endpoint against `/Users/cellphones/Downloads/Cv CSL Bảng chuẩn.pdf`. Remove or correct any claim without an explicit source. Confirm every temporary case-study statement stays visibly labelled `Case study demo`, the phone link resolves to `+84967347781`, and the site contains no downloadable CV.
 
 - [ ] **Step 3: Inspect accessibility and performance with browser tooling.**
 
@@ -500,7 +577,7 @@ Run a Lighthouse accessibility check against the local server and resolve any er
 If a correction was required:
 
 ```bash
-git add index.html assets/css/styles.css assets/js/case-studies.js assets/js/main.js assets/images/portrait-placeholder.svg README.md server.mjs .github/workflows/pages.yml tests/portfolio.test.mjs
+git add index.html assets/css/styles.css assets/js/case-studies.js assets/js/main.js assets/images/portrait-placeholder.svg README.md server.mjs tests/portfolio.test.mjs tests/server.test.mjs
 git commit -m "fix: complete portfolio release checks"
 ```
 
@@ -518,9 +595,9 @@ Open the locally served home page in the Codex browser and summarize the verifie
 - Bright Apple-inspired Personal Growth OS tokens, typography, spacing, original visual motif, light motion, responsiveness, and accessibility are implemented in Task 3 and reinforced in Task 5.
 - Verified metrics and their contextual boundaries are protected in Task 1, rendered in Task 2, and rechecked in Task 7.
 - The three case-study demos, replacement-safe data model, keyboard dialog, and URL states are implemented in Task 4.
-- GitHub deployment, local preview, and asset/evidence replacement documentation are implemented in Task 6.
+- Local preview verification, GitHub Pages compatibility notes, and the deferred publishing handoff are implemented in Task 6.
 - Cross-browser/reduced-motion/no-JavaScript/manual quality checks happen in Task 7.
 
 ### Consistency and scope check
 
-The plan remains one deployable static site. It intentionally excludes a CMS, analytics, backend contact form, external data source, tracking, and customer-data ingestion. `caseStudies`, `openCaseStudy`, `closeCaseStudy`, all section IDs, and the local server name are defined before their consuming tasks.
+The plan remains one portable static site. It intentionally excludes a CMS, analytics, backend contact form, external data source, tracking, customer-data ingestion, CV download, and GitHub deployment until repository details are supplied. `caseStudies`, `openCaseStudy`, `closeCaseStudy`, all section IDs, and the local server name are defined before their consuming tasks.
