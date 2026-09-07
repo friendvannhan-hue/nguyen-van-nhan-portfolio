@@ -10,9 +10,14 @@ test('home page exposes source-backed headline proof points', () => {
     '12B VNĐ portfolio',
     '7-10 thành viên',
     '30% → 58% retention',
-    '70% → 30% churn',
-    '+120% upsell revenue',
+    '70% → 30% churn rủi ro cao',
+    '+120% upsell revenue (MRR 100M)',
   ]) {
     assert.match(page, new RegExp(fact.replace(/[+()]/g, '\\$&')));
   }
+});
+
+test('home page presents a Vietnamese-first identity', () => {
+  assert.match(page, /<title>[^<]*Tăng trưởng[^<]*<\/title>/);
+  assert.match(page, /<h1>[^<]*Tăng trưởng[^<]*<\/h1>/);
 });
