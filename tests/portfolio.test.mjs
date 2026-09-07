@@ -19,7 +19,7 @@ test('home page exposes source-backed headline proof points', () => {
 
 test('home page presents a Vietnamese-first identity', () => {
   assert.match(page, /<title>[^<]*Tăng trưởng[^<]*<\/title>/);
-  assert.match(page, /<h1>[^<]*tăng trưởng[^<]*<\/h1>/i);
+  assert.match(page, /<h1[^>]*>[^<]*tăng trưởng[^<]*<\/h1>/i);
 });
 
 test('page has landmarks, a keyboard skip link, and direct contact paths', () => {
@@ -33,4 +33,11 @@ test('page has landmarks, a keyboard skip link, and direct contact paths', () =>
   assert.match(page, /href="https:\/\/www\.linkedin\.com\/in\/nguyenvannhan\/"/);
   assert.match(page, /<h1[^>]*>Biến Customer Success thành động cơ tăng trưởng\.<\/h1>/);
   assert.doesNotMatch(page, /<a[^>]+download(?:=|\s|>)/i);
+});
+
+test('hero uses the required accessible heading and CV-supported sectors', () => {
+  assert.match(page, /<section class="hero" aria-labelledby="hero-title">/);
+  assert.match(page, /<h1 id="hero-title">Biến Customer Success thành động cơ tăng trưởng\.<\/h1>/);
+  assert.doesNotMatch(page, /SaaS, Martech, Retail và FMCG/);
+  assert.match(page, /SaaS, Martech, ERP, E-commerce và Finance/);
 });

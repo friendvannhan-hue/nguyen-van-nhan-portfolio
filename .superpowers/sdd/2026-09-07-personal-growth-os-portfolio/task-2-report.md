@@ -30,3 +30,10 @@ The final static inspection reported one `h1`, five `h2` elements, all five requ
 - Existing CSS is still foundation-level and visual styling is intentionally deferred to Task 3.
 - The three case-study buttons are static fallback controls; dialog behavior is intentionally deferred to Task 4.
 - The portrait remains a neutral placeholder as required; no CV portrait was extracted or published.
+
+## Fix round 1 evidence (review findings)
+
+- **RED:** Added a focused test requiring `<section class="hero" aria-labelledby="hero-title">`, `<h1 id="hero-title">…</h1>`, and CV-supported sector wording. The test failed against the previous `aria-label`/un-IDed heading and `Retail` copy.
+- **GREEN:** Updated the hero to the exact `aria-labelledby` contract and added `id="hero-title"`; replaced `Retail` with the CV-supported `ERP, E-commerce và Finance` wording.
+- Updated the pre-existing identity test to allow the required H1 ID attribute while preserving its Vietnamese headline assertion.
+- **Verification:** `tests/portfolio.test.mjs` passes 4/4; `git diff --check` is clean.
