@@ -37,3 +37,29 @@ The final static inspection reported one `h1`, five `h2` elements, all five requ
 - **GREEN:** Updated the hero to the exact `aria-labelledby` contract and added `id="hero-title"`; replaced `Retail` with the CV-supported `ERP, E-commerce và Finance` wording.
 - Updated the pre-existing identity test to allow the required H1 ID attribute while preserving its Vietnamese headline assertion.
 - **Verification:** `tests/portfolio.test.mjs` passes 4/4; `git diff --check` is clean.
+
+### Exact verification record
+
+Command run:
+
+```bash
+/Users/cellphones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test tests/portfolio.test.mjs
+```
+
+Focused test name:
+
+```text
+hero uses the required accessible heading and CV-supported sectors
+```
+
+Fresh output:
+
+```text
+✔ home page exposes source-backed headline proof points
+✔ home page presents a Vietnamese-first identity
+✔ page has landmarks, a keyboard skip link, and direct contact paths
+✔ hero uses the required accessible heading and CV-supported sectors
+ℹ tests 4
+ℹ pass 4
+ℹ fail 0
+```
