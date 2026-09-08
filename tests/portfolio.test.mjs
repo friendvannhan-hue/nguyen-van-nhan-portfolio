@@ -10,7 +10,7 @@ const script = await readFile(new URL('../assets/js/main.js', import.meta.url), 
 test('home page exposes source-backed headline proof points', () => {
   for (const fact of [
     '400+ accounts',
-    '12B VNĐ portfolio',
+    '~12B VNĐ portfolio',
     '7-10 thành viên',
     '30% → 58% retention',
     '70% → 30% churn rủi ro cao',
@@ -18,6 +18,7 @@ test('home page exposes source-backed headline proof points', () => {
   ]) {
     assert.match(page, new RegExp(fact.replace(/[+()]/g, '\\$&')));
   }
+  assert.doesNotMatch(`${page}\n${caseData}`, /(?<![~≈])12B VNĐ portfolio/);
 });
 
 test('home page presents a Vietnamese-first identity', () => {
@@ -53,6 +54,49 @@ test('styles provide the approved visual tokens and critical accessibility rules
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
   assert.match(css, /@media\s*\(max-width:\s*768px\)/);
   assert.match(css, /min-height:\s*44px/);
+});
+
+test('progressive enhancement never hides content without JavaScript', () => {
+  assert.match(script, /document\.documentElement\.classList\.add\('js-ready'\)/);
+  assert.match(css, /html\.js-ready\s+\.reveal/);
+  assert.doesNotMatch(css, /@media\s*\(prefers-reduced-motion:\s*no-preference\)\s*\{\s*\.reveal\s*\{/);
+  assert.match(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)/);
+});
+
+test('case studies retain a complete, generic demo schema and no-JS detail', () => {
+  for (const field of ['context', 'challenge', 'role', 'intervention', 'outcomes', 'artefacts', 'learning', 'evidenceStatus']) {
+    assert.equal((caseData.match(new RegExp(`${field}:`, 'g')) || []).length, 3, `${field} is present for every demo`);
+  }
+  assert.doesNotMatch(caseData, /body:/);
+  assert.equal((page.match(/<details class="case-study-fallback">/g) || []).length, 3);
+  assert.equal((page.match(/<summary>Chi tiết case study demo<\/summary>/g) || []).length, 3);
+  assert.match(page, /Bằng chứng &amp; trạng thái/);
+});
+
+test('case-study dialog has labelled structured slots populated as text', () => {
+  for (const slot of ['context', 'challenge', 'role', 'intervention', 'outcomes', 'artefacts', 'learning', 'evidence']) {
+    assert.match(page, new RegExp(`data-case-study-slot="${slot}"`));
+  }
+  assert.match(script, /dialogSlots\.forEach/);
+  assert.match(script, /slot\.textContent/);
+});
+
+test('header and desktop layout meet mobile and readability release constraints', () => {
+  assert.match(css, /\.site-header\s*\{[^}]*position:\s*sticky[^}]*top:\s*0[^}]*z-index:/);
+  assert.match(css, /\.wordmark\s*\{[^}]*min-height:\s*44px/);
+  assert.doesNotMatch(css, /\.wordmark span,\s*\.header-cta\s*\{\s*display:\s*none/);
+  assert.match(css, /\.impact-grid\s*\{\s*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.doesNotMatch(css, /\.impact-grid\s*\{\s*grid-template-columns:\s*repeat\(4/);
+  assert.match(css, /\.wordmark span\s*\{[^}]*font-size:\s*\.8125rem/);
+  assert.match(css, /\.lifecycle p\s*\{[^}]*font-size:\s*1rem/);
+  assert.match(page, /class="lifecycle-evidence"/);
+});
+
+test('normal-size semantic labels use contrast-safe cyan and green text tokens', () => {
+  assert.match(css, /--cyan-text:\s*#[0-9A-F]{6}/);
+  assert.match(css, /--green-text:\s*#[0-9A-F]{6}/);
+  assert.match(css, /\.eyebrow\s*\{[^}]*color:\s*var\(--cyan-text\)/);
+  assert.match(css, /\.metric\s*\{[^}]*color:\s*var\(--green-text\)/);
 });
 
 test('case-study data contains exactly three visibly labelled demos', () => {

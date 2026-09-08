@@ -25,3 +25,23 @@ test('preview server serves the site and rejects unknown files', async () => {
   const missing = await fetch(`http://127.0.0.1:${port}/missing-file`);
   assert.equal(missing.status, 404);
 });
+
+test('preview server handles malformed and directory-like paths without 500s', async () => {
+  for (const path of ['//', '/assets/', '/%2e%2e%2fserver.mjs', '/%ZZ']) {
+    const response = await fetch(`http://127.0.0.1:${port}${path}`);
+    assert.ok([400, 403, 404].includes(response.status), `${path} returned ${response.status}`);
+  }
+});
+
+test('preview server supplies explicit safe MIME types for static assets', async () => {
+  for (const [path, type] of [
+    ['/assets/css/styles.css', /text\/css/],
+    ['/assets/js/main.js', /text\/javascript/],
+    ['/assets/images/portrait-placeholder.svg', /image\/svg\+xml/],
+  ]) {
+    const response = await fetch(`http://127.0.0.1:${port}${path}`);
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get('content-type'), type);
+    assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
+  }
+});

@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { extname, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -25,6 +25,17 @@ const server = createServer(async (request, response) => {
       return;
     }
 
+    if (!relativePath || (pathname !== '/' && pathname.endsWith('/'))) {
+      response.writeHead(404).end('Not found');
+      return;
+    }
+
+    const entry = await stat(filePath);
+    if (!entry.isFile()) {
+      response.writeHead(404).end('Not found');
+      return;
+    }
+
     const body = await readFile(filePath);
     response.writeHead(200, {
       'Content-Type': contentTypes[extname(filePath)] || 'application/octet-stream',
@@ -32,7 +43,7 @@ const server = createServer(async (request, response) => {
     });
     response.end(body);
   } catch (error) {
-    const status = error.code === 'ENOENT' ? 404 : error instanceof URIError ? 400 : 500;
+    const status = ['ENOENT', 'ENOTDIR', 'EISDIR'].includes(error.code) ? 404 : error instanceof URIError || error instanceof TypeError ? 400 : 500;
     response.writeHead(status).end(status === 404 ? 'Not found' : 'Request failed');
   }
 });

@@ -1,10 +1,11 @@
 import { caseStudies } from './case-studies.js';
 
+document.documentElement.classList.add('js-ready');
+
 const caseStudyDialog = document.querySelector('#case-study-dialog');
 const dialogTitle = document.querySelector('#case-study-dialog-title');
-const dialogBody = document.querySelector('#case-study-dialog-body');
-const dialogEvidence = document.querySelector('#case-study-dialog-evidence');
 const dialogCloseButton = document.querySelector('[data-case-study-close]');
+const dialogSlots = [...document.querySelectorAll('[data-case-study-slot]')];
 let triggeringButton = null;
 
 function setCaseStudyHash(id) {
@@ -15,12 +16,14 @@ export function openCaseStudy(caseStudy) {
   if (!caseStudy || !caseStudyDialog) return;
 
   dialogTitle.textContent = caseStudy.title;
-  dialogBody.textContent = caseStudy.body;
-  dialogEvidence.textContent = caseStudy.evidenceStatus;
+  dialogSlots.forEach((slot) => {
+    const field = slot.dataset.caseStudySlot === 'evidence' ? 'evidenceStatus' : slot.dataset.caseStudySlot;
+    slot.textContent = caseStudy[field];
+  });
   setCaseStudyHash(caseStudy.id);
 
   if (!caseStudyDialog.open) caseStudyDialog.showModal();
-  dialogCloseButton.focus();
+  dialogCloseButton?.focus();
 }
 
 export function closeCaseStudy() {
