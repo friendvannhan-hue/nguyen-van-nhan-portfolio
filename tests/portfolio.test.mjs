@@ -71,3 +71,11 @@ test('case-study interaction uses native dialog, close behavior, and URL state',
   assert.match(script, /caseStudyDialog\.close\(\)/);
   assert.match(script, /Escape/);
 });
+
+test('progressive enhancement honors reduced motion and active-section navigation', () => {
+  assert.match(script, /IntersectionObserver/);
+  assert.match(script, /matchMedia\('\(prefers-reduced-motion: reduce\)'\)/);
+  assert.match(script, /is-active/);
+  assert.match(script, /is-visible/);
+  assert.match(page, /data-section-link/);
+});
