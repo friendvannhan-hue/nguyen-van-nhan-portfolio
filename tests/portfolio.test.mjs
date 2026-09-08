@@ -40,7 +40,7 @@ test('page has landmarks, a keyboard skip link, and direct contact paths', () =>
 });
 
 test('hero uses the required accessible heading and CV-supported sectors', () => {
-  assert.match(page, /<section class="hero" aria-labelledby="hero-title">/);
+  assert.match(page, /<section class="hero command-center chapter-dark" aria-labelledby="hero-title">/);
   assert.match(page, /<h1 id="hero-title">Biến Customer Success thành động cơ tăng trưởng\.<\/h1>/);
   assert.doesNotMatch(page, /SaaS, Martech, Retail và FMCG/);
   assert.match(page, /SaaS, Martech, ERP, E-commerce và Finance/);
@@ -122,4 +122,50 @@ test('progressive enhancement honors reduced motion and active-section navigatio
   assert.match(script, /is-active/);
   assert.match(script, /is-visible/);
   assert.match(page, /data-section-link/);
+});
+
+test('hero behaves as a dark growth command center with an original proof orbit', () => {
+  assert.match(page, /<section class="hero command-center chapter-dark"/);
+  assert.match(page, /<div class="growth-orbit"[^>]*aria-label="Bản đồ bằng chứng tăng trưởng"/);
+  assert.equal((page.match(/class="orbit-proof /g) || []).length, 4);
+  assert.match(page, /class="orbit-core"/);
+  assert.doesNotMatch(page, /(?:src|href)="[^"]*cnvwork\.com/i);
+});
+
+test('the page uses alternating narrative chapters and repeated mini calls to action', () => {
+  assert.match(page, /id="impact"[^>]*class="chapter chapter-light"/);
+  assert.match(page, /id="operating-system"[^>]*class="chapter chapter-dark"/);
+  assert.match(page, /id="experience"[^>]*class="chapter chapter-light"/);
+  assert.match(page, /id="case-studies"[^>]*class="chapter chapter-dark"/);
+  assert.ok((page.match(/class="chapter-statement/g) || []).length >= 2);
+  assert.ok((page.match(/class="mini-cta/g) || []).length >= 2);
+});
+
+test('impact cards are numbered and the customer growth OS connects six lifecycle modules', () => {
+  for (const number of ['01', '02', '03', '04']) {
+    assert.match(page, new RegExp(`<span class="impact-number">${number}<\\/span>`));
+  }
+  assert.match(page, /<div class="os-map\b/);
+  assert.match(page, /<div class="os-hub"/);
+  assert.equal((page.match(/class="os-module/g) || []).length, 6);
+  for (const moduleName of ['Onboarding', 'Activation', 'Health score', 'QBR', 'Renewal forecast', 'Expansion']) {
+    assert.match(page, new RegExp(`>${moduleName}<`));
+  }
+});
+
+test('each case study shows a distinct, visibly labelled demo preview', () => {
+  assert.equal((page.match(/class="demo-badge">DEMO DATA<\/span>/g) || []).length, 3);
+  assert.equal((page.match(/class="case-preview/g) || []).length, 3);
+  for (const preview of ['risk-signals', 'qbr-plan', 'coaching-cadence']) {
+    assert.match(page, new RegExp(`data-demo-preview="${preview}"`));
+  }
+  assert.doesNotMatch(page, /testimonial|customer logo|client logo/i);
+});
+
+test('career story is condensed into phases and recognition is presented as a trust strip', () => {
+  assert.match(page, /class="career-phases/);
+  assert.equal((page.match(/class="career-phase"/g) || []).length, 3);
+  assert.match(page, /class="trust-strip/);
+  assert.match(page, /Best CS Team 2025/);
+  assert.match(page, /Employee of the Year 2021/);
 });
