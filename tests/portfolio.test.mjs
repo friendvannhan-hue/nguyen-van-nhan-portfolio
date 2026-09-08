@@ -3,6 +3,7 @@ import test from 'node:test';
 import { readFile } from 'node:fs/promises';
 
 const page = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+const css = await readFile(new URL('../assets/css/styles.css', import.meta.url), 'utf8');
 
 test('home page exposes source-backed headline proof points', () => {
   for (const fact of [
@@ -40,4 +41,14 @@ test('hero uses the required accessible heading and CV-supported sectors', () =>
   assert.match(page, /<h1 id="hero-title">Biến Customer Success thành động cơ tăng trưởng\.<\/h1>/);
   assert.doesNotMatch(page, /SaaS, Martech, Retail và FMCG/);
   assert.match(page, /SaaS, Martech, ERP, E-commerce và Finance/);
+});
+
+test('styles provide the approved visual tokens and critical accessibility rules', () => {
+  for (const color of ['#F6F7F9', '#FFFFFF', '#0B1F3A', '#536176', '#F0647C', '#C93D5B', '#2BA6C8', '#1E9B6A', '#DCE2EA', '#145DD7']) {
+    assert.match(css, new RegExp(color));
+  }
+  assert.match(css, /:focus-visible/);
+  assert.match(css, /prefers-reduced-motion:\s*reduce/);
+  assert.match(css, /@media\s*\(max-width:\s*768px\)/);
+  assert.match(css, /min-height:\s*44px/);
 });
