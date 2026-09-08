@@ -4,6 +4,8 @@ import { readFile } from 'node:fs/promises';
 
 const page = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 const css = await readFile(new URL('../assets/css/styles.css', import.meta.url), 'utf8');
+const caseData = await readFile(new URL('../assets/js/case-studies.js', import.meta.url), 'utf8');
+const script = await readFile(new URL('../assets/js/main.js', import.meta.url), 'utf8');
 
 test('home page exposes source-backed headline proof points', () => {
   for (const fact of [
@@ -51,4 +53,21 @@ test('styles provide the approved visual tokens and critical accessibility rules
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
   assert.match(css, /@media\s*\(max-width:\s*768px\)/);
   assert.match(css, /min-height:\s*44px/);
+});
+
+test('case-study data contains exactly three visibly labelled demos', () => {
+  assert.equal((caseData.match(/label: 'Case study demo'/g) || []).length, 3);
+  assert.match(caseData, /retention-recovery/);
+  assert.match(caseData, /expansion-motion/);
+  assert.match(caseData, /operational-scaling/);
+  assert.match(caseData, /Chờ bổ sung tài liệu/);
+});
+
+test('case-study interaction uses native dialog, close behavior, and URL state', () => {
+  assert.match(page, /<dialog id="case-study-dialog"/);
+  assert.match(script, /export function openCaseStudy\(caseStudy\)/);
+  assert.match(script, /export function closeCaseStudy\(\)/);
+  assert.match(script, /history\.replaceState/);
+  assert.match(script, /caseStudyDialog\.close\(\)/);
+  assert.match(script, /Escape/);
 });
