@@ -1,0 +1,41 @@
+.case-site-header { position: sticky; z-index: 40; top: 0; display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 72px; padding: .7rem max(1.1rem, calc((100vw - var(--content)) / 2)); background: rgba(255, 255, 255, .95); border-bottom: 1px solid var(--border); backdrop-filter: blur(16px); }
+.case-site-header a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 800; text-decoration: none; }
+.case-site-header .button { min-height: 46px; }
+.case-study-page { padding-bottom: 6rem; }
+.case-hero { padding-block: clamp(4rem, 9vw, 8rem); background: linear-gradient(135deg, #FFFFFF, #EEF4FF); }
+.case-hero-inner { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(260px, .7fr); gap: clamp(2rem, 7vw, 6rem); align-items: end; }
+.case-hero h1 { max-width: 12ch; margin-bottom: 1.4rem; }
+.case-summary { max-width: 62ch; color: var(--body); font-size: 1.12rem; }
+.case-result-card { padding: 1.5rem; background: var(--navy); border-radius: var(--radius-card); box-shadow: var(--shadow-lg); }
+.case-result-card .status { margin-bottom: 2rem; }
+.case-result-card strong { display: block; color: var(--surface); font: 800 clamp(1.6rem, 3vw, 2.45rem)/1.12 Manrope, sans-serif; }
+.case-result-card p { margin: .7rem 0 0; color: #C8D5E4; }
+.case-layout { display: grid; grid-template-columns: 220px minmax(0, 760px); justify-content: center; gap: clamp(2rem, 6vw, 5rem); padding-top: 4rem; }
+.case-toc { position: sticky; top: 100px; align-self: start; }
+.case-toc p { color: var(--navy); font-size: .75rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.case-toc ol { display: grid; gap: .4rem; margin: 0; padding: 0; list-style: none; }
+.case-toc a { color: var(--body); font-size: .82rem; text-decoration: none; }
+.case-toc a:hover { color: var(--blue); }
+.case-study-sections { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; }
+.case-section { scroll-margin-top: 96px; padding: clamp(1.4rem, 4vw, 2.25rem); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); box-shadow: var(--shadow-sm); }
+.case-section > span { color: var(--blue); font-size: .75rem; font-weight: 800; letter-spacing: .12em; }
+.case-section h2 { margin-top: 1.25rem; font-size: clamp(1.45rem, 3vw, 2.1rem); }
+.case-section p:last-child, .case-section ul:last-child { margin-bottom: 0; }
+.case-section li + li { margin-top: .45rem; }
+.artefact-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; margin-top: 1.25rem; }
+.artefact-card { min-height: 120px; padding: 1rem; background: var(--canvas); border: 1px solid var(--border); border-radius: .9rem; }
+.artefact-card strong, .artefact-card span { display: block; }
+.artefact-card span { margin-top: .4rem; color: var(--body); font-size: .8rem; }
+.case-next { margin-top: 1rem; padding: 2rem; color: #C8D5E4; background: var(--navy); border-radius: var(--radius-card); }
+.case-next h2 { color: var(--surface); }
+.case-next a { color: var(--surface); }
+@media (max-width: 820px) {
+  .case-hero-inner, .case-layout { grid-template-columns: 1fr; }
+  .case-toc { position: static; }
+  .case-toc ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .case-site-header .wordmark span { display: none; }
+  .case-site-header .button { padding-inline: .7rem; font-size: .78rem; }
+  .case-toc ol, .artefact-grid { grid-template-columns: 1fr; }
+}
