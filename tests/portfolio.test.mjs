@@ -47,7 +47,30 @@ test('page keeps semantic landmarks and direct contact paths', () => {
   assert.match(page, /href="tel:\+84967347781"/);
   assert.match(page, /href="mailto:nhannv\.working@gmail\.com"/);
   assert.match(page, /href="https:\/\/www\.linkedin\.com\/in\/nguyenvannhan\/"/);
+  assert.match(page, /href="https:\/\/zalo\.me\/0967347781"/);
+  assert.match(page, /Kết nối Zalo · 096 734 7781/);
   assert.doesNotMatch(page, /<a[^>]+download/i);
+});
+
+test('verified portfolio context precedes the manifesto without inventing client logos', () => {
+  const ecosystemStart = page.indexOf('class="client-ecosystem"');
+  const manifestoStart = page.indexOf('id="manifesto"');
+  assert.ok(ecosystemStart > -1);
+  assert.ok(ecosystemStart < manifestoStart);
+  assert.match(page, /500\+ tài khoản SME &amp; Enterprise/);
+  assert.equal((page.match(/class="client-segment"/g) || []).length, 8);
+  for (const segment of ['F&amp;B chuỗi', 'Trà &amp; cà phê', 'Brewery', 'Siêu thị', 'Nhà thuốc', 'Mỹ phẩm', 'Tiện lợi', 'B2B &amp; phân phối']) {
+    assert.ok(page.includes(segment), `missing customer segment: ${segment}`);
+  }
+  assert.doesNotMatch(page, /logo khách hàng|khách hàng tiêu biểu/i);
+});
+
+test('tool ecosystem names the systems used in an accessible static grid', () => {
+  assert.match(page, /aria-labelledby="tool-ecosystem-title"/);
+  assert.equal((page.match(/class="tool-card"/g) || []).length, 14);
+  for (const tool of ['Haravan', 'Sapo', 'Google Workspace', 'Lark Suite', 'Odoo', 'CRM', 'Zalo OA', 'Facebook', 'Call Center', 'Mattermost', 'Google Drive', 'Google Docs', 'Fireflies.ai', 'CNV CDP']) {
+    assert.ok(page.includes(`>${tool}<`), `missing tool: ${tool}`);
+  }
 });
 
 test('visual foundation exposes approved tokens and publication assets', async () => {
