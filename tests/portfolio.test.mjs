@@ -119,4 +119,13 @@ test('contact close uses the approved invitation and direct channels only', () =
   assert.doesNotMatch(page, /<form\b/i);
 });
 
+test('mobile navigation is a labelled native disclosure with progressive closing', () => {
+  assert.match(page, /<details[^>]*open[^>]*data-nav-disclosure/);
+  assert.match(page, /<summary[^>]*data-menu-toggle[^>]*>Menu<\/summary>/);
+  assert.match(page, /<nav id="primary-navigation"[^>]*data-primary-nav/);
+  assert.match(script, /navDisclosure\.removeAttribute\('open'\)/);
+  assert.match(script, /event\.key === 'Escape'/);
+  assert.match(script, /link\.addEventListener\('click'/);
+});
+
 export { css, page, script };

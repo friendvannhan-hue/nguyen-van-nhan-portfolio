@@ -3,6 +3,31 @@ document.documentElement.classList.add('js-ready');
 const revealTargets = [...document.querySelectorAll('.reveal')];
 const sectionLinks = [...document.querySelectorAll('[data-section-link]')];
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const navDisclosure = document.querySelector('[data-nav-disclosure]');
+const navSummary = document.querySelector('[data-menu-toggle]');
+const mobileViewport = window.matchMedia('(max-width: 768px)');
+
+function syncNavigation(viewport) {
+  if (!navDisclosure) return;
+  if (viewport.matches) navDisclosure.removeAttribute('open');
+  else navDisclosure.setAttribute('open', '');
+}
+
+syncNavigation(mobileViewport);
+mobileViewport.addEventListener?.('change', (event) => syncNavigation(event));
+
+document.querySelectorAll('[data-primary-nav] a').forEach((link) => {
+  link.addEventListener('click', () => {
+    if (mobileViewport.matches) navDisclosure?.removeAttribute('open');
+  });
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && navDisclosure?.open && mobileViewport.matches) {
+    navDisclosure.removeAttribute('open');
+    navSummary?.focus();
+  }
+});
 
 function setActiveSection(sectionId) {
   sectionLinks.forEach((link) => {

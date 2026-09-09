@@ -20,7 +20,7 @@ test('preview server serves the site and rejects unknown files', async () => {
   const home = await fetch(`http://127.0.0.1:${port}/`);
   assert.equal(home.status, 200);
   assert.match(home.headers.get('content-type'), /text\/html/);
-  assert.match(await home.text(), /Customer Growth Leader/);
+  assert.match(await home.text(), /Customer Growth &amp; Business Operations Leader/);
 
   const missing = await fetch(`http://127.0.0.1:${port}/missing-file`);
   assert.equal(missing.status, 404);
@@ -31,6 +31,18 @@ test('preview server handles malformed and directory-like paths without 500s', a
     const response = await fetch(`http://127.0.0.1:${port}${path}`);
     assert.ok([400, 403, 404].includes(response.status), `${path} returned ${response.status}`);
   }
+});
+
+test('preview server resolves canonical case-study directories', async () => {
+  for (const slug of ['retention-recovery', 'expansion-revenue', 'operational-transformation']) {
+    const response = await fetch(`http://127.0.0.1:${port}/case-studies/${slug}/`);
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get('content-type'), /text\/html/);
+    assert.match(await response.text(), /<main class="case-study-page"/);
+  }
+
+  const missing = await fetch(`http://127.0.0.1:${port}/case-studies/not-public/`);
+  assert.equal(missing.status, 404);
 });
 
 test('preview server supplies explicit safe MIME types for static assets', async () => {

@@ -11,22 +11,23 @@ const contentTypes = {
   '.js': 'text/javascript; charset=utf-8',
   '.png': 'image/png',
   '.svg': 'image/svg+xml; charset=utf-8',
+  '.webp': 'image/webp',
 };
 
 const server = createServer(async (request, response) => {
   try {
     const url = new URL(request.url, 'http://localhost');
     const pathname = decodeURIComponent(url.pathname);
-    const relativePath = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '');
+    const relativeBase = pathname === '/' ? '' : pathname.replace(/^\/+/, '');
+    if (pathname !== '/' && !relativeBase) {
+      response.writeHead(404).end('Not found');
+      return;
+    }
+    const relativePath = pathname === '/' ? 'index.html' : pathname.endsWith('/') ? `${relativeBase}index.html` : relativeBase;
     const filePath = resolve(root, relativePath);
 
     if (filePath !== root && !filePath.startsWith(`${root}${sep}`)) {
       response.writeHead(403).end('Forbidden');
-      return;
-    }
-
-    if (!relativePath || (pathname !== '/' && pathname.endsWith('/'))) {
-      response.writeHead(404).end('Not found');
       return;
     }
 
