@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { readFile } from 'node:fs/promises';
+import { readFile, stat } from 'node:fs/promises';
 
 const page = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 const css = await readFile(new URL('../assets/css/styles.css', import.meta.url), 'utf8');
@@ -48,6 +48,28 @@ test('page keeps semantic landmarks and direct contact paths', () => {
   assert.match(page, /href="mailto:nhannv\.working@gmail\.com"/);
   assert.match(page, /href="https:\/\/www\.linkedin\.com\/in\/nguyenvannhan\/"/);
   assert.doesNotMatch(page, /<a[^>]+download/i);
+});
+
+test('visual foundation exposes approved tokens and publication assets', async () => {
+  for (const color of ['#F6F7F9', '#FFFFFF', '#0B1F3A', '#475569', '#2563EB', '#1E9B6A', '#C93D5B', '#DCE2EA', '#145DD7']) {
+    assert.match(css, new RegExp(color));
+  }
+
+  assert.match(page, /href="assets\/images\/favicon\.svg"/);
+  assert.match(page, /rel="canonical" href="\/"/);
+  assert.match(page, /property="og:image" content="\/assets\/images\/og-portfolio\.png"/);
+  assert.match(page, /src="assets\/images\/nguyen-van-nhan\.webp"[^>]*width="720"[^>]*height="900"/);
+  assert.match(css, /:focus-visible/);
+  assert.match(css, /min-height:\s*44px/);
+
+  for (const asset of ['favicon.svg', 'og-portfolio.png', 'nguyen-van-nhan.webp']) {
+    const info = await stat(new URL(`../assets/images/${asset}`, import.meta.url));
+    assert.ok(info.size > 100, `${asset} should contain a real asset`);
+  }
+
+  const png = await readFile(new URL('../assets/images/og-portfolio.png', import.meta.url));
+  assert.equal(png.readUInt32BE(16), 1200);
+  assert.equal(png.readUInt32BE(20), 630);
 });
 
 export { css, page, script };
