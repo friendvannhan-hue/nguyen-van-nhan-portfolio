@@ -72,4 +72,26 @@ test('visual foundation exposes approved tokens and publication assets', async (
   assert.equal(png.readUInt32BE(20), 630);
 });
 
+test('solutions expose six complete business problem-solving records', () => {
+  assert.equal((page.match(/class="solution-card(?:\s|\")/g) || []).length, 6);
+  for (const name of ['Customer Retention System', 'Expansion Revenue Engine', 'Onboarding &amp; Adoption', 'Business Operations &amp; Governance', 'Cross-functional Execution', 'AI-enabled Operations']) {
+    assert.ok(page.includes(name), `missing solution: ${name}`);
+  }
+  for (const label of ['Bài toán', 'Cách tiếp cận', 'Đầu ra', 'Bằng chứng']) {
+    assert.equal((page.match(new RegExp(`>${label}<`, 'g')) || []).length, 6);
+  }
+});
+
+test('operating system and execution loop preserve their six-step source order', () => {
+  const layers = ['Strategy', 'Operating Model', 'Execution System', 'Intelligence', 'Cross-functional Motions', 'Business Outcomes'];
+  const steps = ['Translate', 'Align', 'Execute', 'Review', 'Intervene', 'Learn'];
+  assert.equal((page.match(/class="os-layer"/g) || []).length, 6);
+  assert.equal((page.match(/class="loop-step"/g) || []).length, 6);
+  for (const orderedLabels of [layers, steps]) {
+    const positions = orderedLabels.map((label) => page.indexOf(`>${label}<`));
+    assert.ok(positions.every((position) => position > -1));
+    assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
+  }
+});
+
 export { css, page, script };
