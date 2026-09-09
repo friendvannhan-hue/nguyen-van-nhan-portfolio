@@ -71,7 +71,7 @@ test('manifesto introduces an accessible six-module operations architecture', ()
   const manifesto = page.slice(manifestoStart, impactStart);
 
   assert.match(manifesto, /Bệ phóng hoàn hảo để tạo tiền đề tăng trưởng\./);
-  assert.match(manifesto, /Một hệ thống All-in-One, nơi các bộ phận kết nối và làm việc trên cùng một nhịp\./);
+  assert.match(manifesto, /Một hệ thống All-in-One giúp tôi chuyển hóa kiến thức thành kết quả\./);
   assert.match(manifesto, /role="group"[^>]*aria-label="Operations kết nối sáu nhóm năng lực vận hành"/);
   assert.match(manifesto, /<strong>Operations<\/strong><span>Vận hành trung tâm<\/span>/);
   assert.equal((manifesto.match(/class="operations-module(?:\s|\")/g) || []).length, 6);
@@ -117,6 +117,7 @@ test('visual foundation exposes approved tokens and publication assets', async (
 
 test('solutions expose six complete business problem-solving records', () => {
   const solutions = page.slice(page.indexOf('<section id="solutions"'), page.indexOf('<section id="operating-system"'));
+  assert.match(solutions, /class="section-intro section-intro-compact reveal"/);
   assert.equal((solutions.match(/class="solution-card(?:\s|\")/g) || []).length, 6);
   for (const name of ['Customer Retention System', 'Expansion Revenue Engine', 'Onboarding &amp; Adoption', 'Business Operations &amp; Governance', 'Cross-functional Execution', 'AI-enabled Operations']) {
     assert.ok(solutions.includes(name), `missing solution: ${name}`);
@@ -138,13 +139,17 @@ test('operating system and execution loop preserve their six-step source order',
   }
 });
 
-test('AI Operations Lab presents five human-controlled concepts', () => {
+test('AI Operations Lab presents five human-controlled concepts in clear Vietnamese', () => {
+  const aiLab = page.slice(page.indexOf('<section id="ai-lab"'), page.indexOf('<section id="leadership"'));
   assert.equal((page.match(/class="ai-concept-card(?:\s|\")/g) || []).length, 5);
   assert.equal((page.match(/data-status="concept"/g) || []).length, 5);
-  for (const name of ['Account Risk Radar', 'QBR Copilot', 'Voice of Customer Miner', 'Report &amp; Decision Assistant', 'Conversation QA &amp; Coaching']) {
-    assert.ok(page.includes(name), `missing AI concept: ${name}`);
+  for (const name of ['Radar cảnh báo rủi ro tài khoản', 'Trợ lý chuẩn bị báo cáo khách hàng định kỳ', 'Thiết lập giải pháp cho khách hàng', 'Trợ lý báo cáo và ra quyết định', 'Kiểm tra hội thoại và hỗ trợ huấn luyện']) {
+    assert.ok(aiLab.includes(name), `missing AI concept: ${name}`);
   }
-  assert.match(page, /không thay thế judgment của đội ngũ/i);
+  assert.match(aiLab, /không thay thế quyết định chuyên môn của đội ngũ/i);
+  assert.equal((aiLab.match(/>Mô hình đề xuất</g) || []).length, 5);
+  assert.equal((aiLab.match(/>Người phụ trách kiểm tra</g) || []).length, 5);
+  assert.doesNotMatch(aiLab, /Voice of Customer Miner|Human checkpoint|judgment/i);
 });
 
 test('leadership and career match the approved scope without a first-90-days section', () => {
@@ -153,6 +158,22 @@ test('leadership and career match the approved scope without a first-90-days sec
   assert.equal((page.match(/class="career-phase(?:\s|\")/g) || []).length, 4);
   for (const company of ['CNV CDP', '1Office', 'Haravan', 'Shinhan Finance']) assert.ok(page.includes(company));
   assert.doesNotMatch(page, /id="first-90-days"|FIRST 90 DAYS|ninety-day-phase/);
+});
+
+test('career cards display four local company logos with accessible alternatives', async () => {
+  const logos = [
+    ['logo-cnv-cdp.png', 'Logo CNV CDP'],
+    ['logo-1office.svg', 'Logo 1Office'],
+    ['logo-haravan.png', 'Logo Haravan'],
+    ['logo-shinhan-finance.png', 'Logo Shinhan Finance'],
+  ];
+
+  assert.equal((page.match(/class="company-logo"/g) || []).length, 4);
+  for (const [file, alt] of logos) {
+    assert.match(page, new RegExp(`src="assets/images/${file}"[^>]*alt="${alt}"`));
+    const info = await stat(new URL(`../assets/images/${file}`, import.meta.url));
+    assert.ok(info.size > 100, `${file} should contain a real company logo`);
+  }
 });
 
 test('contact close uses the approved invitation and direct channels only', () => {
