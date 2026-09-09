@@ -65,6 +65,26 @@ test('verified portfolio context precedes the manifesto without inventing client
   assert.doesNotMatch(page, /logo khách hàng|khách hàng tiêu biểu/i);
 });
 
+test('manifesto introduces an accessible six-module operations architecture', () => {
+  const manifestoStart = page.indexOf('<section id="manifesto"');
+  const impactStart = page.indexOf('<section id="impact"');
+  const manifesto = page.slice(manifestoStart, impactStart);
+
+  assert.match(manifesto, /Bệ phóng hoàn hảo để tạo tiền đề tăng trưởng\./);
+  assert.match(manifesto, /Một hệ thống All-in-One, nơi các bộ phận kết nối và làm việc trên cùng một nhịp\./);
+  assert.match(manifesto, /role="group"[^>]*aria-label="Operations kết nối sáu nhóm năng lực vận hành"/);
+  assert.match(manifesto, /<strong>Operations<\/strong><span>Vận hành trung tâm<\/span>/);
+  assert.equal((manifesto.match(/class="operations-module(?:\s|\")/g) || []).length, 6);
+
+  for (const module of ['Data &amp; Marketing', 'Sales Forecast', 'Customer Success', 'Management', 'Technical', 'AI Agent']) {
+    assert.ok(manifesto.includes(`<strong>${module}</strong>`), `missing operations module: ${module}`);
+  }
+
+  for (const explanation of ['Dữ liệu và chiến dịch', 'Dự báo doanh thu', 'Chăm sóc và phát triển khách hàng', 'Quản trị và ra quyết định', 'Triển khai kỹ thuật', 'Trợ lý tự động hóa']) {
+    assert.ok(manifesto.includes(`<span>${explanation}</span>`), `missing plain-language explanation: ${explanation}`);
+  }
+});
+
 test('tool ecosystem names the systems used in an accessible static grid', () => {
   assert.match(page, /aria-labelledby="tool-ecosystem-title"/);
   assert.equal((page.match(/class="tool-card"/g) || []).length, 14);
@@ -127,14 +147,12 @@ test('AI Operations Lab presents five human-controlled concepts', () => {
   assert.match(page, /không thay thế judgment của đội ngũ/i);
 });
 
-test('leadership, career, and 90-day value plan match the approved scope', () => {
+test('leadership and career match the approved scope without a first-90-days section', () => {
   assert.match(page, /id="leadership"/);
   assert.match(page, /Quản lý đội ngũ 8–15 nhân sự/);
   assert.equal((page.match(/class="career-phase(?:\s|\")/g) || []).length, 4);
   for (const company of ['CNV CDP', '1Office', 'Haravan', 'Shinhan Finance']) assert.ok(page.includes(company));
-  assert.equal((page.match(/class="ninety-day-phase(?:\s|\")/g) || []).length, 3);
-  for (const phase of ['0–30 ngày · Diagnose', '31–60 ngày · Build', '61–90 ngày · Activate']) assert.ok(page.includes(phase));
-  assert.match(page, /Không hứa trước một tỷ lệ tăng trưởng cụ thể/);
+  assert.doesNotMatch(page, /id="first-90-days"|FIRST 90 DAYS|ninety-day-phase/);
 });
 
 test('contact close uses the approved invitation and direct channels only', () => {
@@ -151,8 +169,8 @@ test('mobile navigation is a labelled native disclosure with progressive closing
   assert.match(script, /link\.addEventListener\('click'/);
 });
 
-test('homepage chapters follow the approved twelve-part reading path', () => {
-  const ids = ['hero', 'manifesto', 'impact', 'solutions', 'operating-system', 'strategy-loop', 'case-studies', 'ai-lab', 'leadership', 'experience', 'first-90-days', 'contact'];
+test('homepage chapters follow the approved eleven-part reading path', () => {
+  const ids = ['hero', 'manifesto', 'impact', 'solutions', 'operating-system', 'strategy-loop', 'case-studies', 'ai-lab', 'leadership', 'experience', 'contact'];
   const positions = ids.map((id) => page.indexOf(`id="${id}"`));
   assert.ok(positions.every((position) => position > -1));
   assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
