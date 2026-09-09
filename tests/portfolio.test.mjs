@@ -73,12 +73,13 @@ test('visual foundation exposes approved tokens and publication assets', async (
 });
 
 test('solutions expose six complete business problem-solving records', () => {
-  assert.equal((page.match(/class="solution-card(?:\s|\")/g) || []).length, 6);
+  const solutions = page.slice(page.indexOf('<section id="solutions"'), page.indexOf('<section id="operating-system"'));
+  assert.equal((solutions.match(/class="solution-card(?:\s|\")/g) || []).length, 6);
   for (const name of ['Customer Retention System', 'Expansion Revenue Engine', 'Onboarding &amp; Adoption', 'Business Operations &amp; Governance', 'Cross-functional Execution', 'AI-enabled Operations']) {
-    assert.ok(page.includes(name), `missing solution: ${name}`);
+    assert.ok(solutions.includes(name), `missing solution: ${name}`);
   }
   for (const label of ['Bài toán', 'Cách tiếp cận', 'Đầu ra', 'Bằng chứng']) {
-    assert.equal((page.match(new RegExp(`>${label}<`, 'g')) || []).length, 6);
+    assert.equal((solutions.match(new RegExp(`>${label}<`, 'g')) || []).length, 6);
   }
 });
 
@@ -92,6 +93,30 @@ test('operating system and execution loop preserve their six-step source order',
     assert.ok(positions.every((position) => position > -1));
     assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
   }
+});
+
+test('AI Operations Lab presents five human-controlled concepts', () => {
+  assert.equal((page.match(/class="ai-concept-card(?:\s|\")/g) || []).length, 5);
+  assert.equal((page.match(/data-status="concept"/g) || []).length, 5);
+  for (const name of ['Account Risk Radar', 'QBR Copilot', 'Voice of Customer Miner', 'Report &amp; Decision Assistant', 'Conversation QA &amp; Coaching']) {
+    assert.ok(page.includes(name), `missing AI concept: ${name}`);
+  }
+  assert.match(page, /không thay thế judgment của đội ngũ/i);
+});
+
+test('leadership, career, and 90-day value plan match the approved scope', () => {
+  assert.match(page, /id="leadership"/);
+  assert.match(page, /Quản lý đội ngũ 8–15 nhân sự/);
+  assert.equal((page.match(/class="career-phase(?:\s|\")/g) || []).length, 4);
+  for (const company of ['CNV CDP', '1Office', 'Haravan', 'Shinhan Finance']) assert.ok(page.includes(company));
+  assert.equal((page.match(/class="ninety-day-phase(?:\s|\")/g) || []).length, 3);
+  for (const phase of ['0–30 ngày · Diagnose', '31–60 ngày · Build', '61–90 ngày · Activate']) assert.ok(page.includes(phase));
+  assert.match(page, /Không hứa trước một tỷ lệ tăng trưởng cụ thể/);
+});
+
+test('contact close uses the approved invitation and direct channels only', () => {
+  assert.match(page, /Nếu doanh nghiệp của bạn cần biến chiến lược Customer Growth thành một bộ máy có thể vận hành, chúng ta nên trao đổi\./);
+  assert.doesNotMatch(page, /<form\b/i);
 });
 
 export { css, page, script };
