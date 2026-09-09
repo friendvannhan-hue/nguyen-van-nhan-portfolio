@@ -49,3 +49,13 @@ test('operational transformation keeps outcomes qualitative and demo artefacts l
   assert.match(result, /trách nhiệm|cadence|phối hợp/i);
   assert.match(html, /Demo data/);
 });
+
+test('public pages contain no superseded portfolio claims', async () => {
+  const pages = [home];
+  for (const [slug] of cases) pages.push(await readFile(new URL(`../case-studies/${slug}/index.html`, import.meta.url), 'utf8'));
+  const corpus = pages.join('\n');
+  for (const stale of ['400+ accounts', '~12B', '7-10', '30% → 58%', '+120%']) {
+    assert.ok(!corpus.includes(stale), `superseded claim remains: ${stale}`);
+  }
+  assert.doesNotMatch(corpus, /(?:\+110%|110%\s+(?:growth|increase)|tăng trưởng upsell 110%)/i);
+});

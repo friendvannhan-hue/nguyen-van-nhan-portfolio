@@ -128,4 +128,31 @@ test('mobile navigation is a labelled native disclosure with progressive closing
   assert.match(script, /link\.addEventListener\('click'/);
 });
 
+test('homepage chapters follow the approved twelve-part reading path', () => {
+  const ids = ['hero', 'manifesto', 'impact', 'solutions', 'operating-system', 'strategy-loop', 'case-studies', 'ai-lab', 'leadership', 'experience', 'first-90-days', 'contact'];
+  const positions = ids.map((id) => page.indexOf(`id="${id}"`));
+  assert.ok(positions.every((position) => position > -1));
+  assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
+});
+
+test('core content stays readable without script and motion is optional', () => {
+  assert.match(page, /<details[^>]*open[^>]*data-nav-disclosure/);
+  assert.doesNotMatch(page, /hidden[^>]*data-primary-nav/);
+  assert.match(css, /html\.js-ready\s+\.reveal/);
+  assert.match(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)/);
+  assert.match(css, /scroll-padding-top/);
+  assert.match(css, /@media\s*\(max-width:\s*768px\)/);
+});
+
+test('homepage identifiers, headings, and images remain accessible', () => {
+  const ids = [...page.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
+  assert.equal(new Set(ids).size, ids.length);
+  assert.equal((page.match(/<h1\b/g) || []).length, 1);
+  for (const image of page.matchAll(/<img\b[^>]*>/g)) {
+    assert.match(image[0], /alt="[^"]+"/);
+    assert.match(image[0], /width="\d+"[^>]*height="\d+"/);
+  }
+  assert.doesNotMatch(page, /target="_blank"(?![^>]*rel="noopener noreferrer")/);
+});
+
 export { css, page, script };

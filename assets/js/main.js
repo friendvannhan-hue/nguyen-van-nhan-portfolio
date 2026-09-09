@@ -5,7 +5,7 @@ const sectionLinks = [...document.querySelectorAll('[data-section-link]')];
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const navDisclosure = document.querySelector('[data-nav-disclosure]');
 const navSummary = document.querySelector('[data-menu-toggle]');
-const mobileViewport = window.matchMedia('(max-width: 768px)');
+const mobileViewport = window.matchMedia('(max-width: 1100px)');
 
 function syncNavigation(viewport) {
   if (!navDisclosure) return;
