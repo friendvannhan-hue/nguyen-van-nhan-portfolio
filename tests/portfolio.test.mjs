@@ -27,7 +27,11 @@ test('home page uses only the approved public headline metrics', () => {
 
 test('hero and first chapters follow the approved executive narrative', () => {
   assert.match(page, /<title>Nguyễn Văn Nhân \| Customer Growth &amp; Business Operations Leader<\/title>/);
-  assert.match(page, /<h1 id="hero-title">Tôi xây hệ thống giúp chiến lược được thực thi, đội ngũ vận hành ổn định và khách hàng hiện hữu tạo ra tăng trưởng\.<\/h1>/);
+  const hero = page.slice(page.indexOf('<section id="hero"'), page.indexOf('<section class="client-ecosystem"'));
+  const heroText = hero.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').replace(/\s+([,.])/g, '$1');
+  assert.ok(heroText.includes('Tôi xây hệ thống giúp chiến lược được thực thi, đội ngũ vận hành ổn định và khách hàng hiện hữu tạo ra tăng trưởng.'));
+  assert.equal((hero.match(/class="hero-gradient"/g) || []).length, 3);
+  assert.match(hero, /Customer Growth &amp; Business Operations Leader<\/span>/);
   const sequence = ['hero', 'manifesto', 'impact'].map((name) => page.indexOf(`id="${name}"`));
   assert.ok(sequence.every((offset) => offset > -1));
   assert.deepEqual(sequence, [...sequence].sort((a, b) => a - b));
@@ -148,6 +152,23 @@ test('solutions expose six complete business problem-solving records', () => {
   assert.doesNotMatch(solutions, /Customer Retention System|Expansion Revenue Engine|Onboarding &amp; Adoption|Business Operations &amp; Governance|Cross-functional Execution|AI-enabled Operations/);
   for (const label of ['Bài toán', 'Cách tiếp cận', 'Đầu ra', 'Bằng chứng']) {
     assert.equal((solutions.match(new RegExp(`>${label}<`, 'g')) || []).length, 6);
+  }
+});
+
+test('solution proof cards link HR to three authored product sources', () => {
+  const solutionsStart = page.indexOf('<section id="solutions"');
+  const proofStart = page.indexOf('class="solution-proof ');
+  const operatingSystemStart = page.indexOf('<section id="operating-system"');
+  assert.ok(solutionsStart < proofStart && proofStart < operatingSystemStart);
+  const proof = page.slice(proofStart, operatingSystemStart);
+  assert.equal((proof.match(/class="solution-proof-card"/g) || []).length, 3);
+  for (const [title, url] of [
+    ['Lộ trình tăng trưởng trên nền tảng sở hữu', 'https://cg.cnvwork.com/files/nhan/solution/cnvcdp-owned-platform.html#top'],
+    ['Agentic CDP 360 — Dữ liệu hợp nhất và tăng trưởng tự động', 'https://cg.cnvwork.com/files/nhan/solution/agentic-cdp-360.html'],
+    ['Giải pháp CNV CDP và Marketing Automation', 'https://cg.cnvwork.com/files/nhan/solution/cdp-solution.html#top'],
+  ]) {
+    assert.ok(proof.includes(title), `missing authored product: ${title}`);
+    assert.ok(proof.includes(`href="${url}" target="_blank" rel="noopener noreferrer"`), `missing safe external link: ${url}`);
   }
 });
 
