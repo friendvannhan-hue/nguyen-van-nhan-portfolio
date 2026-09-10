@@ -243,6 +243,10 @@ test('AI Operations Lab presents five concise concepts and highlights the revenu
   const aiLab = page.slice(page.indexOf('<section id="ai-lab"'), page.indexOf('<section id="leadership"'));
   assert.equal((page.match(/class="ai-concept-card(?:\s|\")/g) || []).length, 5);
   assert.equal((page.match(/data-status="concept"/g) || []).length, 5);
+  assert.match(aiLab, /class="section-intro ai-lab-intro reveal"/);
+  assert.equal((aiLab.match(/<dl class="ai-card-details">/g) || []).length, 5);
+  assert.match(css, /\.ai-grid\s*{[^}]*grid-template-columns:\s*repeat\(2,/s);
+  assert.match(css, /\.ai-revenue-card\s*{[^}]*grid-column:\s*1\s*\/\s*-1/s);
   for (const name of ['Radar cảnh báo rủi ro tài khoản', 'Trợ lý chuẩn bị báo cáo khách hàng định kỳ', 'Thiết lập giải pháp cho khách hàng', 'Trợ lý báo cáo và ra quyết định', 'Đóng gói AI Agent thành sản phẩm tạo doanh thu']) {
     assert.ok(aiLab.includes(name), `missing AI concept: ${name}`);
   }
