@@ -26,12 +26,14 @@ test('home page uses only the approved public headline metrics', () => {
 });
 
 test('hero and first chapters follow the approved executive narrative', () => {
-  assert.match(page, /<title>Nguyễn Văn Nhân \| Customer Growth &amp; Business Operations Leader<\/title>/);
+  assert.match(page, /<title>Nguyễn Văn Nhân \| Customer Growth &amp; Business Operations Expert<\/title>/);
   const hero = page.slice(page.indexOf('<section id="hero"'), page.indexOf('<section class="client-ecosystem"'));
   const heroText = hero.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').replace(/\s+([,.])/g, '$1');
   assert.ok(heroText.includes('Tôi xây hệ thống giúp chiến lược được thực thi, đội ngũ vận hành ổn định và khách hàng hiện hữu tạo ra tăng trưởng.'));
   assert.equal((hero.match(/class="hero-gradient"/g) || []).length, 3);
-  assert.match(hero, /Customer Growth &amp; Business Operations Leader<\/span>/);
+  assert.match(hero, /Customer Growth &amp; Business Operations Expert<\/span>/);
+  assert.doesNotMatch(hero, /Xem cách tôi tạo ra kết quả|Trao đổi về bài toán tăng trưởng/);
+  assert.doesNotMatch(page, /Customer Growth &amp; Business Operations Leader/);
   const sequence = ['hero', 'manifesto', 'impact'].map((name) => page.indexOf(`id="${name}"`));
   assert.ok(sequence.every((offset) => offset > -1));
   assert.deepEqual(sequence, [...sequence].sort((a, b) => a - b));
@@ -91,8 +93,8 @@ test('manifesto introduces an accessible six-module operations architecture', ()
 
 test('tool ecosystem names the approved systems and uses local brand assets', async () => {
   assert.match(page, /aria-labelledby="tool-ecosystem-title"/);
-  assert.equal((page.match(/class="tool-card"/g) || []).length, 15);
-  for (const tool of ['Haravan', 'Sapo', 'Google Workspace', 'Lark Suite', 'Odoo', 'Microsoft Excel', '1Office', 'CRM', 'Zalo OA', 'Call Center', 'Mattermost', 'Google Drive', 'Google Docs', 'Fireflies.ai', 'CNV CDP']) {
+  assert.equal((page.match(/class="tool-card"/g) || []).length, 21);
+  for (const tool of ['Haravan', 'Sapo', 'Google Workspace', 'Lark Suite', 'Odoo', 'Microsoft Excel', '1Office', 'CRM', 'Zalo OA', 'Call Center', 'Mattermost', 'Google Drive', 'Google Docs', 'Fireflies.ai', 'CNV CDP', 'Codex GPT', 'Claude', 'OpenClaw', 'Visual Studio Code', 'DeepSeek', 'Antigravity IDE']) {
     assert.ok(page.includes(`>${tool}<`), `missing tool: ${tool}`);
   }
   assert.doesNotMatch(page, />Facebook</);
@@ -111,13 +113,21 @@ test('tool ecosystem names the approved systems and uses local brand assets', as
     'tool-google-docs.png',
     'tool-fireflies.png',
     'logo-cnv-cdp.png',
+    'tool-codex.svg',
+    'tool-claude.svg',
+    'tool-openclaw.svg',
+    'tool-vscode.svg',
+    'tool-deepseek.svg',
+    'tool-antigravity.png',
   ];
-  assert.equal((page.match(/class="tool-logo"/g) || []).length, toolLogos.length);
+  assert.equal((page.match(/class="tool-logo(?:\s|\")/g) || []).length, toolLogos.length);
   for (const asset of toolLogos) {
     assert.match(page, new RegExp(`src="assets/images/${asset}"[^>]*alt="Logo [^"]+"`));
     const info = await stat(new URL(`../assets/images/${asset}`, import.meta.url));
     assert.ok(info.size > 100, `${asset} should contain a real tool logo`);
   }
+  assert.match(page, /class="tool-logo tool-logo-haravan"[^>]*src="assets\/images\/logo-haravan\.png"/);
+  assert.match(css, /\.tool-logo-haravan\s*{[^}]*filter:\s*invert\(1\)/s);
 });
 
 test('visual foundation exposes approved tokens and publication assets', async () => {
@@ -181,6 +191,7 @@ test('case-study library frames three business contexts and their response', () 
   assert.match(cases, /05 · CHUYỂN MÌNH TĂNG TRƯỞNG THÍCH NGHI/);
   assert.ok(visibleText.includes('3 vấn đề lớn tôi đã đối mặt và phương án giải quyết.'));
   assert.equal((cases.match(/class="case-card-context"/g) || []).length, 3);
+  assert.doesNotMatch(cases, /class="case-demo|Dữ liệu minh họa/);
   for (const title of [
     'Khởi động chiến lược giữ chân và gia hạn trên quy mô toàn công ty',
     'Biến QBR và kế hoạch tài khoản thành động lực tăng trưởng bền vững',

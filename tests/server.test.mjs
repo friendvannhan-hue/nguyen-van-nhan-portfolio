@@ -20,7 +20,7 @@ test('preview server serves the site and rejects unknown files', async () => {
   const home = await fetch(`http://127.0.0.1:${port}/`);
   assert.equal(home.status, 200);
   assert.match(home.headers.get('content-type'), /text\/html/);
-  assert.match(await home.text(), /Customer Growth &amp; Business Operations Leader/);
+  assert.match(await home.text(), /Customer Growth &amp; Business Operations Expert/);
 
   const missing = await fetch(`http://127.0.0.1:${port}/missing-file`);
   assert.equal(missing.status, 404);
