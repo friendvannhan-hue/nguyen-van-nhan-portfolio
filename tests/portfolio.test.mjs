@@ -142,12 +142,31 @@ test('solutions expose six complete business problem-solving records', () => {
   const solutions = page.slice(page.indexOf('<section id="solutions"'), page.indexOf('<section id="operating-system"'));
   assert.match(solutions, /class="section-intro section-intro-compact reveal"/);
   assert.equal((solutions.match(/class="solution-card(?:\s|\")/g) || []).length, 6);
-  for (const name of ['Customer Retention System', 'Expansion Revenue Engine', 'Onboarding &amp; Adoption', 'Business Operations &amp; Governance', 'Cross-functional Execution', 'AI-enabled Operations']) {
+  for (const name of ['Hệ thống giữ chân và gia hạn khách hàng', 'Mở rộng doanh thu từ khách hàng hiện hữu', 'Triển khai và thúc đẩy khách hàng sử dụng hiệu quả', 'Hệ thống vận hành và quản trị', 'Phối hợp thực thi liên phòng ban', 'Vận hành tăng cường bằng AI']) {
     assert.ok(solutions.includes(name), `missing solution: ${name}`);
   }
+  assert.doesNotMatch(solutions, /Customer Retention System|Expansion Revenue Engine|Onboarding &amp; Adoption|Business Operations &amp; Governance|Cross-functional Execution|AI-enabled Operations/);
   for (const label of ['Bài toán', 'Cách tiếp cận', 'Đầu ra', 'Bằng chứng']) {
     assert.equal((solutions.match(new RegExp(`>${label}<`, 'g')) || []).length, 6);
   }
+});
+
+test('case-study library frames three business contexts and their response', () => {
+  const cases = page.slice(page.indexOf('<section id="case-studies"'), page.indexOf('<section id="ai-lab"'));
+  const visibleText = cases.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+  assert.match(cases, /05 · CHUYỂN MÌNH TĂNG TRƯỞNG THÍCH NGHI/);
+  assert.ok(visibleText.includes('3 vấn đề lớn tôi đã đối mặt và phương án giải quyết.'));
+  assert.equal((cases.match(/class="case-card-context"/g) || []).length, 3);
+  for (const title of [
+    'Khởi động chiến lược giữ chân và gia hạn trên quy mô toàn công ty',
+    'Biến QBR và kế hoạch tài khoản thành động lực tăng trưởng bền vững',
+    'Tái thiết vận hành sau bán hàng thành mô hình xuyên suốt',
+  ]) assert.ok(cases.includes(title), `missing case title: ${title}`);
+  for (const context of [
+    'Đội gia hạn phần mềm còn non trẻ, thiếu người dẫn dắt và chưa có hệ thống chung.',
+    'Doanh thu chững lại, cơ hội bán thêm khó xác định và đội ngũ thiếu nhịp phối hợp.',
+    'Quy trình chồng chéo, trách nhiệm mơ hồ và hành trình khách hàng chưa được tối ưu.',
+  ]) assert.ok(cases.includes(context), `missing case context: ${context}`);
 });
 
 test('operating system and execution loop preserve their six-step source order', () => {

@@ -4,9 +4,9 @@ import { readFile } from 'node:fs/promises';
 
 const home = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 const cases = [
-  ['retention-recovery', '28% → 58%'],
-  ['expansion-revenue', '110% mục tiêu upsell'],
-  ['operational-transformation', 'Qualitative'],
+  ['retention-recovery', '28% → 58%', 'Khởi động chiến lược giữ chân và gia hạn trên quy mô toàn công ty', 'Đội gia hạn phần mềm còn non trẻ, thiếu người dẫn dắt và chưa có hệ thống chung.'],
+  ['expansion-revenue', '110% mục tiêu upsell', 'Biến QBR và kế hoạch tài khoản thành động lực tăng trưởng bền vững', 'Doanh thu chững lại, cơ hội bán thêm khó xác định và đội ngũ thiếu nhịp phối hợp.'],
+  ['operational-transformation', 'Qualitative', 'Tái thiết vận hành sau bán hàng thành mô hình xuyên suốt', 'Quy trình chồng chéo, trách nhiệm mơ hồ và hành trình khách hàng chưa được tối ưu.'],
 ];
 const requiredSections = [
   'Executive summary',
@@ -32,12 +32,14 @@ test('homepage links to exactly three canonical case-study routes', () => {
 });
 
 test('three canonical case pages implement the shared twelve-part narrative', async () => {
-  for (const [slug, proof] of cases) {
+  for (const [slug, proof, title, context] of cases) {
     const html = await readFile(new URL(`../case-studies/${slug}/index.html`, import.meta.url), 'utf8');
     assert.equal((html.match(/<h1\b/g) || []).length, 1, `${slug} should have one H1`);
     assert.equal((html.match(/<li class="case-section"/g) || []).length, 12, `${slug} should have twelve sections`);
     for (const heading of requiredSections) assert.ok(html.includes(`>${heading}<`), `${slug} missing ${heading}`);
     assert.ok(html.includes(proof), `${slug} missing approved evidence state`);
+    assert.ok(html.includes(`<h1>${title}</h1>`), `${slug} missing localized title`);
+    assert.ok(html.includes(context), `${slug} missing business context`);
     assert.match(html, /href="\/#contact"/);
   }
 });
