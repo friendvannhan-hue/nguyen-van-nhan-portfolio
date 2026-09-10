@@ -26,7 +26,7 @@ const requiredSections = [
 test('homepage links to the two approved detailed case studies', () => {
   assert.equal((home.match(/class="case-card(?:\s|\")/g) || []).length, 3);
   for (const [slug] of cases.slice(0, 2)) {
-    assert.match(home, new RegExp(`href="/case-studies/${slug}/"`));
+    assert.match(home, new RegExp(`href="case-studies/${slug}/"`));
   }
   assert.doesNotMatch(home, /href="\/case-studies\/operational-transformation\/"/);
   assert.doesNotMatch(home, /Xem chi tiết chuyển đổi vận hành/);
@@ -42,7 +42,7 @@ test('three canonical case pages implement the shared twelve-part narrative', as
     assert.ok(html.includes(proof), `${slug} missing approved evidence state`);
     assert.ok(html.includes(`<h1>${title}</h1>`), `${slug} missing localized title`);
     assert.ok(html.includes(context), `${slug} missing business context`);
-    assert.match(html, /href="\/#contact"/);
+    assert.match(html, /href="\.\.\/\.\.\/#contact"/);
   }
 });
 

@@ -136,8 +136,8 @@ test('visual foundation exposes approved tokens and publication assets', async (
   }
 
   assert.match(page, /href="assets\/images\/favicon\.svg"/);
-  assert.match(page, /rel="canonical" href="\/"/);
-  assert.match(page, /property="og:image" content="\/assets\/images\/og-portfolio\.png"/);
+  assert.match(page, /rel="canonical" href="https:\/\/friendvannhan-hue\.github\.io\/nguyen-van-nhan-portfolio\/"/);
+  assert.match(page, /property="og:image" content="https:\/\/friendvannhan-hue\.github\.io\/nguyen-van-nhan-portfolio\/assets\/images\/og-portfolio\.png"/);
   assert.match(page, /class="hero-portrait-cutout"[^>]*src="assets\/images\/nguyen-van-nhan-hero-cutout\.png"[^>]*width="1470"[^>]*height="1756"/);
   assert.match(css, /:focus-visible/);
   assert.match(css, /min-height:\s*44px/);
