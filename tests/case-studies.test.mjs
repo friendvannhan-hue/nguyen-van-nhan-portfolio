@@ -23,13 +23,11 @@ const requiredSections = [
   'Bài học và cách áp dụng ở doanh nghiệp khác',
 ];
 
-test('homepage links to the two approved detailed case studies', () => {
+test('homepage presents three case cards without detail links', () => {
   assert.equal((home.match(/class="case-card(?:\s|\")/g) || []).length, 3);
-  for (const [slug] of cases.slice(0, 2)) {
-    assert.match(home, new RegExp(`href="case-studies/${slug}/"`));
-  }
-  assert.doesNotMatch(home, /href="\/case-studies\/operational-transformation\/"/);
-  assert.doesNotMatch(home, /Xem chi tiết chuyển đổi vận hành/);
+  assert.doesNotMatch(home, /class="case-card-link"/);
+  assert.doesNotMatch(home, /href="(?:\/)?case-studies\//);
+  assert.doesNotMatch(home, /Xem chi tiết/);
   assert.doesNotMatch(home, /<dialog\b|data-case-study-id|#case-study=/);
 });
 
