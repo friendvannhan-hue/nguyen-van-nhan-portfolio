@@ -128,11 +128,11 @@ test('visual foundation exposes approved tokens and publication assets', async (
   assert.match(page, /href="assets\/images\/favicon\.svg"/);
   assert.match(page, /rel="canonical" href="\/"/);
   assert.match(page, /property="og:image" content="\/assets\/images\/og-portfolio\.png"/);
-  assert.match(page, /src="assets\/images\/nguyen-van-nhan\.webp"[^>]*width="720"[^>]*height="900"/);
+  assert.match(page, /class="hero-portrait-cutout"[^>]*src="assets\/images\/nguyen-van-nhan-hero-cutout\.png"[^>]*width="1470"[^>]*height="1756"/);
   assert.match(css, /:focus-visible/);
   assert.match(css, /min-height:\s*44px/);
 
-  for (const asset of ['favicon.svg', 'og-portfolio.png', 'nguyen-van-nhan.webp']) {
+  for (const asset of ['favicon.svg', 'og-portfolio.png', 'nguyen-van-nhan.webp', 'nguyen-van-nhan-hero-cutout.png']) {
     const info = await stat(new URL(`../assets/images/${asset}`, import.meta.url));
     assert.ok(info.size > 100, `${asset} should contain a real asset`);
   }
@@ -140,6 +140,9 @@ test('visual foundation exposes approved tokens and publication assets', async (
   const png = await readFile(new URL('../assets/images/og-portfolio.png', import.meta.url));
   assert.equal(png.readUInt32BE(16), 1200);
   assert.equal(png.readUInt32BE(20), 630);
+
+  const portrait = await readFile(new URL('../assets/images/nguyen-van-nhan-hero-cutout.png', import.meta.url));
+  assert.ok([4, 6].includes(portrait[25]), 'hero portrait PNG should contain a real alpha channel');
 });
 
 test('solutions expose six complete business problem-solving records', () => {
