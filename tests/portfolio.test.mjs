@@ -85,11 +85,34 @@ test('manifesto introduces an accessible six-module operations architecture', ()
   }
 });
 
-test('tool ecosystem names the systems used in an accessible static grid', () => {
+test('tool ecosystem names the approved systems and uses local brand assets', async () => {
   assert.match(page, /aria-labelledby="tool-ecosystem-title"/);
-  assert.equal((page.match(/class="tool-card"/g) || []).length, 14);
-  for (const tool of ['Haravan', 'Sapo', 'Google Workspace', 'Lark Suite', 'Odoo', 'CRM', 'Zalo OA', 'Facebook', 'Call Center', 'Mattermost', 'Google Drive', 'Google Docs', 'Fireflies.ai', 'CNV CDP']) {
+  assert.equal((page.match(/class="tool-card"/g) || []).length, 15);
+  for (const tool of ['Haravan', 'Sapo', 'Google Workspace', 'Lark Suite', 'Odoo', 'Microsoft Excel', '1Office', 'CRM', 'Zalo OA', 'Call Center', 'Mattermost', 'Google Drive', 'Google Docs', 'Fireflies.ai', 'CNV CDP']) {
     assert.ok(page.includes(`>${tool}<`), `missing tool: ${tool}`);
+  }
+  assert.doesNotMatch(page, />Facebook</);
+
+  const toolLogos = [
+    'logo-haravan.png',
+    'tool-sapo.png',
+    'tool-google-workspace.png',
+    'tool-lark.png',
+    'tool-odoo.png',
+    'tool-excel.png',
+    'logo-1office.svg',
+    'tool-zalo.png',
+    'tool-mattermost.png',
+    'tool-google-drive.png',
+    'tool-google-docs.png',
+    'tool-fireflies.png',
+    'logo-cnv-cdp.png',
+  ];
+  assert.equal((page.match(/class="tool-logo"/g) || []).length, toolLogos.length);
+  for (const asset of toolLogos) {
+    assert.match(page, new RegExp(`src="assets/images/${asset}"[^>]*alt="Logo [^"]+"`));
+    const info = await stat(new URL(`../assets/images/${asset}`, import.meta.url));
+    assert.ok(info.size > 100, `${asset} should contain a real tool logo`);
   }
 });
 
@@ -139,16 +162,55 @@ test('operating system and execution loop preserve their six-step source order',
   }
 });
 
-test('AI Operations Lab presents five human-controlled concepts in clear Vietnamese', () => {
+test('operating system includes a privacy-safe dashboard evidence gallery without changing the chapter flow', async () => {
+  const operatingSystemStart = page.indexOf('<section id="operating-system"');
+  const strategyLoopStart = page.indexOf('<section id="strategy-loop"');
+  const operatingSystem = page.slice(operatingSystemStart, strategyLoopStart);
+  const dashboardAssets = [
+    'dashboard-value-chain.jpg',
+    'dashboard-renewal-status.jpg',
+    'dashboard-renewal-monthly.jpg',
+    'dashboard-data-coverage.jpg',
+    'dashboard-renewal-report.jpg',
+    'dashboard-okr-kpi.jpg',
+    'dashboard-implementation-overview.jpg',
+    'dashboard-project-growth.jpg',
+    'dashboard-service-mix.jpg',
+    'dashboard-team-performance.jpg',
+    'dashboard-credit-revenue.jpg',
+    'dashboard-management-status.jpg',
+    'dashboard-customer-data.jpg',
+  ];
+
+  assert.match(operatingSystem, /Dashboard vận hành do tôi trực tiếp thiết kế và xây dựng/);
+  assert.match(operatingSystem, /class="dashboard-evidence/);
+  assert.equal((operatingSystem.match(/class="dashboard-card(?:\s|\")/g) || []).length, 13);
+  assert.equal((operatingSystem.match(/dashboard-card-featured/g) || []).length, 4);
+  assert.match(operatingSystem, /<details class="dashboard-archive"/);
+  assert.match(operatingSystem, /Xem toàn bộ 13 dashboard/);
+  assert.match(operatingSystem, /Hình ảnh đã được ẩn danh và sử dụng dữ liệu minh họa/);
+  assert.match(operatingSystem, /không sao chép hoặc chia sẻ ra bên ngoài/i);
+  assert.doesNotMatch(operatingSystem, /<section\b[^>]*dashboard/i);
+
+  for (const asset of dashboardAssets) {
+    assert.match(operatingSystem, new RegExp(`src="assets/images/dashboards/${asset}"[^>]*loading="lazy"`));
+    const info = await stat(new URL(`../assets/images/dashboards/${asset}`, import.meta.url));
+    assert.ok(info.size > 1_000, `${asset} should contain a sanitized dashboard image`);
+  }
+});
+
+test('AI Operations Lab presents five concise concepts and highlights the revenue add-on', () => {
   const aiLab = page.slice(page.indexOf('<section id="ai-lab"'), page.indexOf('<section id="leadership"'));
   assert.equal((page.match(/class="ai-concept-card(?:\s|\")/g) || []).length, 5);
   assert.equal((page.match(/data-status="concept"/g) || []).length, 5);
-  for (const name of ['Radar cảnh báo rủi ro tài khoản', 'Trợ lý chuẩn bị báo cáo khách hàng định kỳ', 'Thiết lập giải pháp cho khách hàng', 'Trợ lý báo cáo và ra quyết định', 'Kiểm tra hội thoại và hỗ trợ huấn luyện']) {
+  for (const name of ['Radar cảnh báo rủi ro tài khoản', 'Trợ lý chuẩn bị báo cáo khách hàng định kỳ', 'Thiết lập giải pháp cho khách hàng', 'Trợ lý báo cáo và ra quyết định', 'Đóng gói AI Agent thành sản phẩm tạo doanh thu']) {
     assert.ok(aiLab.includes(name), `missing AI concept: ${name}`);
   }
   assert.match(aiLab, /không thay thế quyết định chuyên môn của đội ngũ/i);
-  assert.equal((aiLab.match(/>Mô hình đề xuất</g) || []).length, 5);
-  assert.equal((aiLab.match(/>Người phụ trách kiểm tra</g) || []).length, 5);
+  assert.match(aiLab, /class="ai-concept-card ai-revenue-card reveal"/);
+  assert.match(aiLab, />Tính năng tạo doanh thu</);
+  assert.equal((aiLab.match(/>Mô hình đề xuất</g) || []).length, 4);
+  assert.doesNotMatch(aiLab, /Người phụ trách kiểm tra|Kiểm tra hội thoại và hỗ trợ huấn luyện/);
   assert.doesNotMatch(aiLab, /Voice of Customer Miner|Human checkpoint|judgment/i);
 });
 

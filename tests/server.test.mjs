@@ -50,6 +50,7 @@ test('preview server supplies explicit safe MIME types for static assets', async
     ['/assets/css/styles.css', /text\/css/],
     ['/assets/js/main.js', /text\/javascript/],
     ['/assets/images/portrait-placeholder.svg', /image\/svg\+xml/],
+    ['/assets/images/dashboards/dashboard-renewal-report.jpg', /image\/jpeg/],
   ]) {
     const response = await fetch(`http://127.0.0.1:${port}${path}`);
     assert.equal(response.status, 200);
