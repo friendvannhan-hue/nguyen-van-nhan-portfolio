@@ -163,9 +163,33 @@ test('solutions expose six complete business problem-solving records', () => {
     assert.ok(solutions.includes(name), `missing solution: ${name}`);
   }
   assert.doesNotMatch(solutions, /Customer Retention System|Expansion Revenue Engine|Onboarding &amp; Adoption|Business Operations &amp; Governance|Cross-functional Execution|AI-enabled Operations/);
-  for (const label of ['Bài toán', 'Cách tiếp cận', 'Đầu ra', 'Bằng chứng']) {
+  for (const label of ['Bài toán', 'Cách triển khai', 'Giá trị / Bằng chứng']) {
     assert.equal((solutions.match(new RegExp(`>${label}<`, 'g')) || []).length, 6);
   }
+  assert.doesNotMatch(solutions, />Cách tiếp cận<|>Đầu ra<|>Bằng chứng</);
+});
+
+test('growth technology architecture connects six capabilities to one outcome flow', () => {
+  const proofStart = page.indexOf('class="solution-proof ');
+  const operatingSystemStart = page.indexOf('<section id="operating-system"');
+  const proof = page.slice(proofStart, operatingSystemStart);
+
+  assert.match(proof, /GROWTH TECHNOLOGY &amp; OPERATIONS/);
+  assert.match(proof, /Biến các nền tảng rời rạc thành một hệ thống tăng trưởng có thể vận hành/);
+  assert.equal((proof.match(/class="growth-capability(?:\s|\")/g) || []).length, 6);
+  for (const capability of [
+    'Omnichannel Growth',
+    'Customer Data Platform (CDP) &amp; Customer 360',
+    'Private Traffic &amp; Owned Channels',
+    'Loyalty &amp; Retention',
+    'Workflow &amp; Marketing Automation',
+    'Customer Experience System (CX)',
+  ]) assert.ok(proof.includes(capability), `missing growth capability: ${capability}`);
+
+  const flow = ['Điểm chạm', 'Dữ liệu hợp nhất', 'Điều phối tự động', 'Trải nghiệm cá nhân hóa', 'Giữ chân &amp; Doanh thu'];
+  const positions = flow.map((label) => proof.indexOf(`>${label}<`));
+  assert.ok(positions.every((position) => position > -1));
+  assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
 });
 
 test('solution proof cards link HR to three authored product sources', () => {
@@ -188,7 +212,7 @@ test('solution proof cards link HR to three authored product sources', () => {
 test('case-study library frames three business contexts and their response', () => {
   const cases = page.slice(page.indexOf('<section id="case-studies"'), page.indexOf('<section id="ai-lab"'));
   const visibleText = cases.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
-  assert.match(cases, /05 · CHUYỂN MÌNH TĂNG TRƯỞNG THÍCH NGHI/);
+  assert.match(cases, /04 · CHUYỂN MÌNH TĂNG TRƯỞNG THÍCH NGHI/);
   assert.ok(visibleText.includes('3 vấn đề lớn tôi đã đối mặt và phương án giải quyết.'));
   assert.equal((cases.match(/class="case-card-context"/g) || []).length, 3);
   assert.doesNotMatch(cases, /class="case-demo|Dữ liệu minh họa/);
@@ -204,22 +228,19 @@ test('case-study library frames three business contexts and their response', () 
   ]) assert.ok(cases.includes(context), `missing case context: ${context}`);
 });
 
-test('operating system and execution loop preserve their six-step source order', () => {
+test('operating system preserves its six layers without a duplicate execution loop', () => {
   const layers = ['Strategy', 'Operating Model', 'Execution System', 'Intelligence', 'Cross-functional Motions', 'Business Outcomes'];
-  const steps = ['Translate', 'Align', 'Execute', 'Review', 'Intervene', 'Learn'];
   assert.equal((page.match(/class="os-layer"/g) || []).length, 6);
-  assert.equal((page.match(/class="loop-step"/g) || []).length, 6);
-  for (const orderedLabels of [layers, steps]) {
-    const positions = orderedLabels.map((label) => page.indexOf(`>${label}<`));
-    assert.ok(positions.every((position) => position > -1));
-    assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
-  }
+  const positions = layers.map((label) => page.indexOf(`>${label}<`));
+  assert.ok(positions.every((position) => position > -1));
+  assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
+  assert.doesNotMatch(page, /id="strategy-loop"|class="loop-step"|STRATEGY EXECUTION LOOP/);
 });
 
 test('operating system includes a privacy-safe dashboard evidence gallery without changing the chapter flow', async () => {
   const operatingSystemStart = page.indexOf('<section id="operating-system"');
-  const strategyLoopStart = page.indexOf('<section id="strategy-loop"');
-  const operatingSystem = page.slice(operatingSystemStart, strategyLoopStart);
+  const caseStudiesStart = page.indexOf('<section id="case-studies"');
+  const operatingSystem = page.slice(operatingSystemStart, caseStudiesStart);
   const dashboardAssets = [
     'dashboard-value-chain.jpg',
     'dashboard-renewal-status.jpg',
@@ -310,8 +331,8 @@ test('mobile navigation is a labelled native disclosure with progressive closing
   assert.match(script, /link\.addEventListener\('click'/);
 });
 
-test('homepage chapters follow the approved eleven-part reading path', () => {
-  const ids = ['hero', 'manifesto', 'impact', 'solutions', 'operating-system', 'strategy-loop', 'case-studies', 'ai-lab', 'leadership', 'experience', 'contact'];
+test('homepage chapters follow the approved ten-part reading path', () => {
+  const ids = ['hero', 'manifesto', 'impact', 'solutions', 'operating-system', 'case-studies', 'ai-lab', 'leadership', 'experience', 'contact'];
   const positions = ids.map((id) => page.indexOf(`id="${id}"`));
   assert.ok(positions.every((position) => position > -1));
   assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
